@@ -38,7 +38,7 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 			square_position.y += SPEED;
 		}
 
-		gfx.clear(Color::WHITE);
+		gfx.clear(Color::from_hex("ade7ff"));
 		// Paint a blue square at the given position
 		gfx.fill_rect(
 			&Rectangle::new(square_position, Vector::new(64.0, 64.0)),
