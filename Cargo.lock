@@ -1706,7 +1706,7 @@ dependencies = [
 [[package]]
 name = "quicksilver"
 version = "0.4.0-alpha0.3"
-source = "git+https://github.com/ryanisaacg/quicksilver#bef4649fe1aad057515b8aa68f8f3b159429ae23"
+source = "git+https://github.com/ryanisaacg/quicksilver?rev=bef4649fe1aad057515b8aa68f8f3b159429ae23#bef4649fe1aad057515b8aa68f8f3b159429ae23"
 dependencies = [
  "blinds",
  "bytemuck",

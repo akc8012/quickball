@@ -10,7 +10,7 @@ edition = "2018"
 stdweb = ["gestalt/stdweb", "platter/stdweb", "blinds/stdweb", "golem/stdweb","instant/stdweb"]
 
 [dependencies]
-quicksilver = { git = "https://github.com/ryanisaacg/quicksilver", features = ["stdweb"] }
+quicksilver = { git = "https://github.com/ryanisaacg/quicksilver", rev = "bef4649fe1aad057515b8aa68f8f3b159429ae23", features = ["stdweb"] }
 gestalt = { version = "0.1", optional = true }
 platter = "0.1"
 blinds = { version = "0.1.4", default-features = false, features = ["gl", "image"] }

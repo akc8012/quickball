@@ -11,6 +11,7 @@ fn main() {
 	run(
 		Settings {
 			title: "Input Example",
+			size: (854, 480).into(),
 			..Settings::default()
 		},
 		app,
