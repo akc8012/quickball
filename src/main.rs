@@ -37,6 +37,8 @@ impl State for DrawGeometry {
 			Transform::rotate(45) * Transform::scale((0.5, 0.5)),
 			0,
 		);
+
+		println!("{}", window.current_fps());
 		Ok(())
 	}
 }
