@@ -1,8 +1,9 @@
 use quicksilver::{
 	geom::{Circle, Vector},
 	graphics::Color,
-	input::Key,
-	Graphics, Input,
+	input::{ButtonState, Key},
+	lifecycle::Window,
+	Result,
 };
 
 pub struct RollyGame {
@@ -30,8 +31,8 @@ impl RollyGame {
 		self.player.vel = Vector::ZERO;
 	}
 
-	pub fn update(&mut self, input: &Input, delta_time: f32) {
-		if input.key_down(Key::Space) {
+	pub fn update(&mut self, window: &mut Window, delta_time: f32) -> Result<()> {
+		if window.keyboard()[Key::Space] == ButtonState::Pressed {
 			self.reset();
 		}
 
@@ -48,27 +49,31 @@ impl RollyGame {
 			self.player.vel.y = 0.0;
 			self.player.pos.y = 480.0 - self.player.radius;
 
-			if input.key_down(Key::W) {
+			if window.keyboard()[Key::W] == ButtonState::Pressed {
 				self.player.vel.y -= JUMP_HEIGHT * delta_time;
 			}
 		}
 
-		if input.key_down(Key::A) {
+		if window.keyboard()[Key::A] == ButtonState::Held {
 			self.player.vel.x -= ROLL_SPEED * delta_time;
 		}
-		if input.key_down(Key::D) {
+		if window.keyboard()[Key::D] == ButtonState::Held {
 			self.player.vel.x += ROLL_SPEED * delta_time;
 		}
 
 		self.player.pos += self.player.vel;
+
+		Ok(())
 	}
 
-	pub fn draw(&mut self, gfx: &mut Graphics) {
-		gfx.clear(Color::from_hex("ade7ff"));
+	pub fn draw(&mut self, window: &mut Window) -> Result<()> {
+		window.clear(Color::from_hex("ade7ff"))?;
 
-		gfx.fill_circle(
+		window.draw(
 			&Circle::new(self.player.pos, self.player.radius),
 			Color::from_hex("4f30d9"),
 		);
+
+		Ok(())
 	}
 }
