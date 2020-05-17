@@ -9,7 +9,7 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 	loop {
 		while let Some(_) = input.next_event().await {}
 
-		game.update(&input);
+		game.update(&input, 1.0 / 60.0);
 		game.draw(&mut gfx);
 
 		gfx.present(&window)?;
