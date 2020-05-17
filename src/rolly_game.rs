@@ -11,32 +11,45 @@ pub struct RollyGame {
 
 struct Player {
 	pos: Vector,
+	vel: Vector,
 	radius: f32,
 }
 
 impl RollyGame {
 	pub fn new() -> Self {
 		let player = Player {
-			pos: (300, 300).into(),
+			pos: (300, 20).into(),
+			vel: Vector::ZERO,
 			radius: 16.0,
 		};
 		RollyGame { player }
 	}
 
+	fn reset(&mut self) {
+		self.player.pos = (300, 20).into();
+		self.player.vel = Vector::ZERO;
+	}
+
 	pub fn update(&mut self, input: &Input) {
+		if input.key_down(Key::Space) {
+			self.reset();
+		}
+
 		const SPEED: f32 = 2.0;
+		const GRAVITY: f32 = 6.0;
+
+		// TODO: DELTA_TIME
+		self.player.vel.x = 0.0;
+		self.player.vel.y += GRAVITY;
+
 		if input.key_down(Key::A) {
-			self.player.pos.x -= SPEED;
+			self.player.vel.x -= SPEED;
 		}
 		if input.key_down(Key::D) {
-			self.player.pos.x += SPEED;
+			self.player.vel.x += SPEED;
 		}
-		if input.key_down(Key::W) {
-			self.player.pos.y -= SPEED;
-		}
-		if input.key_down(Key::S) {
-			self.player.pos.y += SPEED;
-		}
+
+		self.player.pos += self.player.vel;
 	}
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
