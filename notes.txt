@@ -1,1 +1,1 @@
-build for web: cargo web start --features stdweb
+build for web: cargo web start
