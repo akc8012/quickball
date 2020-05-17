@@ -35,18 +35,27 @@ impl RollyGame {
 			self.reset();
 		}
 
-		const SPEED: f32 = 2.0;
-		const GRAVITY: f32 = 6.0;
+		const ROLL_SPEED: f32 = 4.0;
+		const GRAVITY: f32 = 2.0;
 
 		// TODO: DELTA_TIME
 		self.player.vel.x = 0.0;
 		self.player.vel.y += GRAVITY;
 
+		if self.player.pos.y + self.player.radius >= 480.0 {
+			self.player.vel.y = 0.0;
+			self.player.pos.y = 480.0 - self.player.radius;
+
+			if input.key_down(Key::W) {
+				self.player.vel.y -= 20.0;
+			}
+		}
+
 		if input.key_down(Key::A) {
-			self.player.vel.x -= SPEED;
+			self.player.vel.x -= ROLL_SPEED;
 		}
 		if input.key_down(Key::D) {
-			self.player.vel.x += SPEED;
+			self.player.vel.x += ROLL_SPEED;
 		}
 
 		self.player.pos += self.player.vel;
