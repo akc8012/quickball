@@ -35,9 +35,10 @@ impl RollyGame {
 			self.reset();
 		}
 
-		const ROLL_SPEED: f32 = 240.0;
-		const GRAVITY: f32 = 120.0;
-		const JUMP_HEIGHT: f32 = 1200.0;
+		const FRAME_MODIFIER: f32 = 1.0 / 60.0;
+		const ROLL_SPEED: f32 = 4.0 / FRAME_MODIFIER;
+		const GRAVITY: f32 = 2.0 / FRAME_MODIFIER;
+		const JUMP_HEIGHT: f32 = 20.0 / FRAME_MODIFIER;
 
 		// TODO: DELTA_TIME
 		self.player.vel.x = 0.0;
