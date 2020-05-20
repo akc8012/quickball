@@ -12,14 +12,10 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 		while let Some(_) = input.next_event().await {}
 
 		while update_timer.tick() {
-			let delta_time = update_timer.remaining();
-			if let Some(delta_time) = delta_time {
-				println!("dt: {:?}", delta_time.as_secs_f32());
-			}
+			game.update(&update_timer, &input);
 		}
 
-		if draw_timer.tick() {
-			game.update(&input);
+		if draw_timer.exhaust().is_some() {
 			game.draw(&mut gfx);
 			gfx.present(&window)?;
 		}
