@@ -6,3 +6,4 @@ TODO:
   Setup website (github.io)
   Test (framerate) on mobile
   Look into component pattern
+  Input manager to a) handle WASD + arrow keys b) handle keyPress (on a frame)
