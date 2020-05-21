@@ -12,7 +12,7 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 		while let Some(_) = input.next_event().await {}
 
 		while update_timer.tick() {
-			game.update(&update_timer, &input);
+			game.update(&input);
 		}
 
 		if draw_timer.exhaust().is_some() {
