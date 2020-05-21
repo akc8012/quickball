@@ -55,15 +55,6 @@ impl RollyGame {
 			}
 		}
 
-		if self.player.pos.y + self.player.radius >= 480.0 {
-			self.player.vel.y = 0.0;
-			self.player.pos.y = 480.0 - self.player.radius;
-
-			if input.key_down(Key::W) {
-				self.player.vel.y -= JUMP_HEIGHT;
-			}
-		}
-
 		if input.key_down(Key::A) {
 			self.player.vel.x -= ROLL_SPEED;
 		}
