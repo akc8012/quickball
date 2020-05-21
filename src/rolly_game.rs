@@ -30,17 +30,19 @@ impl RollyGame {
 		self.player.vel = Vector::ZERO;
 	}
 
-	pub fn update(&mut self, input: &Input, delta_time: f32) {
+	pub fn update(&mut self, input: &Input) {
+		self.update_player(input);
+
 		if input.key_down(Key::Space) {
 			self.reset();
 		}
+	}
 
-		const FRAME_MODIFIER: f32 = 1.0 / 60.0;
-		const ROLL_SPEED: f32 = 4.0 / FRAME_MODIFIER;
-		const GRAVITY: f32 = 2.0 / FRAME_MODIFIER;
-		const JUMP_HEIGHT: f32 = 20.0 / FRAME_MODIFIER;
+	fn update_player(&mut self, input: &Input) {
+		const ROLL_SPEED: f32 = 4.0;
+		const GRAVITY: f32 = 2.0;
+		const JUMP_HEIGHT: f32 = 20.0;
 
-		// TODO: DELTA_TIME
 		self.player.vel.x = 0.0;
 		self.player.vel.y += GRAVITY * delta_time;
 
@@ -53,11 +55,20 @@ impl RollyGame {
 			}
 		}
 
+		if self.player.pos.y + self.player.radius >= 480.0 {
+			self.player.vel.y = 0.0;
+			self.player.pos.y = 480.0 - self.player.radius;
+
+			if input.key_down(Key::W) {
+				self.player.vel.y -= JUMP_HEIGHT;
+			}
+		}
+
 		if input.key_down(Key::A) {
-			self.player.vel.x -= ROLL_SPEED * delta_time;
+			self.player.vel.x -= ROLL_SPEED;
 		}
 		if input.key_down(Key::D) {
-			self.player.vel.x += ROLL_SPEED * delta_time;
+			self.player.vel.x += ROLL_SPEED;
 		}
 
 		self.player.pos += self.player.vel;
