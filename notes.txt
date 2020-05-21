@@ -2,7 +2,7 @@ NOTES:
   build for web: cargo web start --features stdweb
 
 TODO:
-  GitHub actions CI
+  GitHub actions CI (in progress)
   Setup website (github.io)
   Test (framerate) on mobile
   Look into component pattern
