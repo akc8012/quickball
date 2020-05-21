@@ -33,10 +33,13 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Install libudev
+        run: sudo apt update && sudo apt install libudev-dev
       - uses: actions-rs/cargo@v1
         with:
           command: test
 
+  # TODO: My boi needs to work with tabs dawg
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
@@ -63,6 +66,8 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Install libudev
+        run: sudo apt update && sudo apt install libudev-dev
       - run: rustup component add clippy
       - uses: actions-rs/cargo@v1
         with:
