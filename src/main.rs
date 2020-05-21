@@ -2,15 +2,24 @@ mod player;
 mod rolly_game;
 use rolly_game::RollyGame;
 
-use quicksilver::{run, Graphics, Input, Result, Settings, Timer, Window};
+use quicksilver::{
+	input::{Event, Key},
+	run, Graphics, Input, Result, Settings, Timer, Window,
+};
 
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
 	let mut game = RollyGame::new();
 	let mut update_timer = Timer::time_per_second(60.0);
 	let mut draw_timer = Timer::time_per_second(60.0);
 
-	loop {
-		while let Some(_) = input.next_event().await {}
+	let mut running = true;
+	while running {
+		while let Some(event) = input.next_event().await {
+			match event {
+				Event::KeyboardInput(key) if key.key() == Key::Escape => running = false,
+				_ => (),
+			}
+		}
 
 		while update_timer.tick() {
 			game.update(&input);
@@ -21,6 +30,8 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 			gfx.present(&window)?;
 		}
 	}
+
+	Ok(())
 }
 
 fn main() {
