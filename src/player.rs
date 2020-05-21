@@ -9,6 +9,7 @@ pub struct Player {
 	pos: Vector,
 	vel: Vector,
 	radius: f32,
+	jump_key_released: bool,
 }
 
 impl Player {
@@ -17,6 +18,7 @@ impl Player {
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
 			radius: 16.0,
+			jump_key_released: true,
 		}
 	}
 
@@ -37,8 +39,9 @@ impl Player {
 			self.vel.y = 0.0;
 			self.pos.y = 480.0 - self.radius;
 
-			if input.key_down(Key::W) {
+			if input.key_down(Key::W) && self.jump_key_released {
 				self.vel.y -= JUMP_HEIGHT;
+				self.jump_key_released = false;
 			}
 		}
 
@@ -47,6 +50,10 @@ impl Player {
 		}
 		if input.key_down(Key::D) {
 			self.vel.x += ROLL_SPEED;
+		}
+
+		if !input.key_down(Key::W) {
+			self.jump_key_released = true;
 		}
 
 		self.pos += self.vel;
