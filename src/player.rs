@@ -28,22 +28,55 @@ impl Player {
 	}
 
 	pub fn update(&mut self, input: &Input) {
-		const ROLL_SPEED: f32 = 4.0;
-		const GRAVITY: f32 = 2.0;
-		const JUMP_HEIGHT: f32 = 20.0;
+		self.fall();
+		if self.grounded() {
+			self.stick_to_ground();
 
-		self.vel.x = 0.0;
-		self.vel.y += GRAVITY;
-
-		if self.pos.y + self.radius >= 480.0 {
-			self.vel.y = 0.0;
-			self.pos.y = 480.0 - self.radius;
-
-			if input.key_down(Key::W) && self.jump_key_released {
-				self.vel.y -= JUMP_HEIGHT;
-				self.jump_key_released = false;
+			if self.can_jump(input) {
+				self.jump();
 			}
 		}
+		self.set_jump_key_released(input);
+
+		self.roll(input);
+		self.update_position();
+	}
+
+	fn fall(&mut self) {
+		const GRAVITY: f32 = 2.0;
+		self.vel.y += GRAVITY;
+	}
+
+	fn grounded(&self) -> bool {
+		// TODO: Pass in resolution
+		self.pos.y + self.radius >= 480.0
+	}
+
+	fn stick_to_ground(&mut self) {
+		self.vel.y = 0.0;
+		self.pos.y = 480.0 - self.radius;
+	}
+
+	fn can_jump(&self, input: &Input) -> bool {
+		input.key_down(Key::W) && self.jump_key_released
+	}
+
+	fn jump(&mut self) {
+		const JUMP_HEIGHT: f32 = 20.0;
+
+		self.vel.y -= JUMP_HEIGHT;
+		self.jump_key_released = false;
+	}
+
+	fn set_jump_key_released(&mut self, input: &Input) {
+		if !input.key_down(Key::W) {
+			self.jump_key_released = true;
+		}
+	}
+
+	fn roll(&mut self, input: &Input) {
+		const ROLL_SPEED: f32 = 4.0;
+		self.vel.x = 0.0;
 
 		if input.key_down(Key::A) {
 			self.vel.x -= ROLL_SPEED;
@@ -51,11 +84,9 @@ impl Player {
 		if input.key_down(Key::D) {
 			self.vel.x += ROLL_SPEED;
 		}
+	}
 
-		if !input.key_down(Key::W) {
-			self.jump_key_released = true;
-		}
-
+	fn update_position(&mut self) {
 		self.pos += self.vel;
 	}
 
