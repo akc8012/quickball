@@ -1,3 +1,4 @@
+mod player;
 mod rolly_game;
 use rolly_game::RollyGame;
 
