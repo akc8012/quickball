@@ -44,14 +44,14 @@ impl RollyGame {
 		const JUMP_HEIGHT: f32 = 20.0;
 
 		self.player.vel.x = 0.0;
-		self.player.vel.y += GRAVITY * delta_time;
+		self.player.vel.y += GRAVITY;
 
 		if self.player.pos.y + self.player.radius >= 480.0 {
 			self.player.vel.y = 0.0;
 			self.player.pos.y = 480.0 - self.player.radius;
 
 			if input.key_down(Key::W) {
-				self.player.vel.y -= JUMP_HEIGHT * delta_time;
+				self.player.vel.y -= JUMP_HEIGHT;
 			}
 		}
 
