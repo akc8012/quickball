@@ -2,9 +2,9 @@ name: Continuous integration
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   check:
@@ -39,7 +39,6 @@ jobs:
         with:
           command: test
 
-  # TODO: My boi needs to work with tabs dawg
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
