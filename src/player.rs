@@ -58,7 +58,7 @@ impl Player {
 	}
 
 	fn can_jump(&self, input: &Input) -> bool {
-		input.key_down(Key::W) && self.jump_key_released
+		(input.key_down(Key::W) || input.key_down(Key::Up)) && self.jump_key_released
 	}
 
 	fn jump(&mut self) {
@@ -78,10 +78,10 @@ impl Player {
 		const ROLL_SPEED: f32 = 4.0;
 		self.vel.x = 0.0;
 
-		if input.key_down(Key::A) {
+		if input.key_down(Key::A) || input.key_down(Key::Left) {
 			self.vel.x -= ROLL_SPEED;
 		}
-		if input.key_down(Key::D) {
+		if input.key_down(Key::D) || input.key_down(Key::Right) {
 			self.vel.x += ROLL_SPEED;
 		}
 	}
