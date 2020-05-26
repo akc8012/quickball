@@ -22,10 +22,10 @@ jobs:
       - name: Install cargo-web
         uses: actions-rs/cargo@v1
         with:
-          command: cargo install cargo-web
+          command: install cargo-web
 
       - name: Build
         uses: actions-rs/cargo@v1
         with:
-          command: cargo web build
+          command: web build
           args: --features stdweb
