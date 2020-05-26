@@ -10,17 +10,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+      # - uses: actions-rs/toolchain@v1
+      #   with:
+      #     profile: minimal
+      #     toolchain: stable
+      #     override: true
 
-      - name: Install libudev
-        run: sudo apt update && sudo apt install libudev-dev
+      # - name: Install libudev
+      #   run: sudo apt update && sudo apt install libudev-dev
 
-      - name: Build with cargo-web
-        run: cargo install cargo-web && cargo web deploy
+      # - name: Build with cargo-web
+      #   run: cargo install cargo-web && cargo web deploy
+
+      - name: Build dummy
+        run: touch ./target/deploy/dank.cheese
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
