@@ -20,4 +20,11 @@ jobs:
         run: sudo apt update && sudo apt install libudev-dev
 
       - name: Build with cargo-web
-        run: cargo install cargo-web && cargo web build --features stdweb --release
+        run: cargo install cargo-web && cargo web deploy
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.PERSONAL_TOKEN }}
+          external_repository: akc8012/QuickballWeb
+          publish_dir: ./target/deploy
