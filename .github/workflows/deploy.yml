@@ -20,10 +20,7 @@ jobs:
         run: sudo apt update && sudo apt install libudev-dev
 
       - uses: actions-rs/cargo@v1
-        with:
-          command: install cargo-web
+        run: cargo install cargo-web
 
       - uses: actions-rs/cargo@v1
-        with:
-          command: web build
-          args: --features stdweb
+        run: cargo web build --features stdweb
