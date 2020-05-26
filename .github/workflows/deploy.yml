@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -19,12 +20,12 @@ jobs:
         run: sudo apt update && sudo apt install libudev-dev
 
       - name: Install cargo-web
-      - uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@v1
         with:
           command: cargo install cargo-web
 
-      - name: Install cargo-web
-      - uses: actions-rs/cargo@v1
+      - name: Build
+        uses: actions-rs/cargo@v1
         with:
           command: cargo web build
           args: --features stdweb
