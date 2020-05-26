@@ -10,25 +10,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # - uses: actions-rs/toolchain@v1
-      #   with:
-      #     profile: minimal
-      #     toolchain: stable
-      #     override: true
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
 
-      # - name: Install libudev
-      #   run: sudo apt update && sudo apt install libudev-dev
+      - name: Install libudev
+        run: sudo apt update && sudo apt install libudev-dev
 
-      # - name: Build with cargo-web
-      #   run: cargo install cargo-web && cargo web deploy
-
-      - name: Build dummy
-        run: touch dank.cheese
+      - name: Build with cargo-web
+        run: cargo install cargo-web && cargo web deploy
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
           external_repository: akc8012/QuickballWeb
-          publish_dir: .
-          # publish_dir: ./target/deploy
+          publish_dir: ./target/deploy
