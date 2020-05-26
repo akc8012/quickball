@@ -19,8 +19,10 @@ jobs:
       - name: Install libudev
         run: sudo apt update && sudo apt install libudev-dev
 
-      - uses: actions-rs/cargo@v1
+      - name: Install cargo-web
         run: cargo install cargo-web
 
       - uses: actions-rs/cargo@v1
-        run: cargo web build --features stdweb
+        with:
+          command: web build
+          args: --features stdweb
