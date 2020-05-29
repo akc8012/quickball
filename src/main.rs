@@ -37,7 +37,7 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 fn main() {
 	run(
 		Settings {
-			title: "Input Example",
+			title: "Quickball",
 			size: (854, 480).into(),
 			..Settings::default()
 		},
