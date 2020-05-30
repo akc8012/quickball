@@ -1,5 +1,3 @@
-use confy;
-
 #[derive(Serialize, Deserialize)]
 pub struct Config {
 	pub step_mode: bool,
