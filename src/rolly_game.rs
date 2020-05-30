@@ -1,6 +1,5 @@
-use quicksilver::{graphics::Color, input::Key, Graphics, Input};
-
 use crate::player::Player;
+use quicksilver::{graphics::Color, input::Key, Graphics, Input};
 
 pub struct RollyGame {
 	player: Player,
