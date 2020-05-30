@@ -5,6 +5,11 @@ use quicksilver::{
 	Graphics, Input,
 };
 
+use crate::{
+	collider::Collider,
+	raycast::{self, Ray},
+};
+
 pub struct Player {
 	pos: Vector,
 	vel: Vector,
@@ -49,7 +54,10 @@ impl Player {
 
 	fn grounded(&self) -> bool {
 		// TODO: Pass in resolution
-		self.pos.y + self.radius >= 480.0
+		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
+		let floor = Collider::new((0.0, 480.0), (854.0, 32.0));
+
+		raycast::cast(ray, floor)
 	}
 
 	fn stick_to_ground(&mut self) {

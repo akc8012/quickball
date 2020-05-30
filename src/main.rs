@@ -1,33 +1,40 @@
+mod collider;
+mod config;
 mod player;
+mod raycast;
 mod rolly_game;
-use rolly_game::RollyGame;
+mod time_stepper;
+
+#[macro_use]
+extern crate serde_derive;
 
 use quicksilver::{
 	input::{Event, Key},
-	run, Graphics, Input, Result, Settings, Timer, Window,
+	run, Graphics, Input, Result, Settings, Window,
 };
 
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
-	let mut game = RollyGame::new();
-	let mut update_timer = Timer::time_per_second(60.0);
-	let mut draw_timer = Timer::time_per_second(60.0);
-
+	let mut time_stepper = time_stepper::TimeStepper::new();
 	let mut running = true;
+	let mut config = config::load();
+
 	while running {
 		while let Some(event) = input.next_event().await {
-			match event {
-				Event::KeyboardInput(key) if key.key() == Key::Escape => running = false,
-				_ => (),
+			if let Event::KeyboardInput(key) = event {
+				if key.key() == Key::Escape {
+					running = false
+				}
+				if key.key() == Key::L && key.is_down() {
+					config = config::load();
+				}
+				if config.step_mode && key.key() == Key::N && key.is_down() {
+					time_stepper.step(&input, &mut gfx, &window)?;
+				}
 			}
 		}
 
-		while update_timer.tick() {
-			game.update(&input);
-		}
-
-		if draw_timer.exhaust().is_some() {
-			game.draw(&mut gfx);
-			gfx.present(&window)?;
+		if !config.step_mode {
+			time_stepper.timed_step(&input, &mut gfx, &window)?;
 		}
 	}
 
@@ -37,7 +44,7 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 fn main() {
 	run(
 		Settings {
-			title: "Input Example",
+			title: "Quickball",
 			size: (854, 480).into(),
 			..Settings::default()
 		},

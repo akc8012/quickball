@@ -2,7 +2,6 @@ NOTES:
   build for web: cargo web start --features stdweb
 
 TODO:
-  Setup website deployment (github.io)
   Test (framerate) on mobile
   Look into component pattern
   Input manager to a) handle WASD + arrow keys b) handle keyPress (on a frame)
