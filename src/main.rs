@@ -20,16 +20,13 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 		next_pressed = false;
 
 		while let Some(event) = input.next_event().await {
-			match event {
-				Event::KeyboardInput(key) => {
-					if key.key() == Key::Escape {
-						running = false
-					}
-					if key.key() == Key::N && key.is_down() {
-						next_pressed = true
-					}
+			if let Event::KeyboardInput(key) = event {
+				if key.key() == Key::Escape {
+					running = false
 				}
-				_ => (),
+				if key.key() == Key::N && key.is_down() {
+					next_pressed = true
+				}
 			}
 		}
 
