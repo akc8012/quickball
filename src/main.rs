@@ -10,9 +10,8 @@ use quicksilver::{
 };
 
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
-	let mut gameloop = GameLoop::new();
+	let mut gameloop = GameRunner::new();
 
-	let step_mode = false;
 	let mut running = true;
 	let mut next_pressed;
 
@@ -30,35 +29,49 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 			}
 		}
 
-		if step_mode {
-			if next_pressed {
-				gameloop.step(&input, &mut gfx, &window)?;
-			}
-		} else {
-			gameloop.looop(&input, &mut gfx, &window)?;
-		}
+		gameloop.run(next_pressed, &input, &mut gfx, &window)?;
 	}
 
 	Ok(())
 }
 
-struct GameLoop {
+struct GameRunner {
 	game: RollyGame,
+	step_mode: bool,
 	update_timer: Timer,
 	draw_timer: Timer,
 }
 
-impl GameLoop {
+impl GameRunner {
 	// TODO: two constructors to handle loop or step (or pass in a flag to one)
 	fn new() -> Self {
 		Self {
 			game: RollyGame::new(),
+			step_mode: false,
 			update_timer: Timer::time_per_second(60.0),
 			draw_timer: Timer::time_per_second(60.0),
 		}
 	}
 
-	pub fn looop(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
+	pub fn run(
+		&mut self,
+		next_pressed: bool,
+		input: &Input,
+		gfx: &mut Graphics,
+		window: &Window,
+	) -> Result<()> {
+		if self.step_mode {
+			if next_pressed {
+				self.step(&input, gfx, &window)?;
+			}
+		} else {
+			self.timestep(&input, gfx, &window)?;
+		}
+
+		Ok(())
+	}
+
+	fn timestep(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
 		while self.update_timer.tick() {
 			self.game.update(&input);
 		}
@@ -71,12 +84,10 @@ impl GameLoop {
 		Ok(())
 	}
 
-	pub fn step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
+	fn step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
 		self.game.update(&input);
 		self.game.draw(gfx);
-		gfx.present(&window)?;
-
-		Ok(())
+		gfx.present(&window)
 	}
 }
 
