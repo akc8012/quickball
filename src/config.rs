@@ -12,5 +12,9 @@ impl Default for Config {
 }
 
 pub fn load() -> Config {
-	confy::load("quickball").expect("could not load config uWu")
+	if cfg!(target_arch = "wasm32") {
+		Config::default()
+	} else {
+		confy::load("quickball").expect("could not load config uWu")
+	}
 }
