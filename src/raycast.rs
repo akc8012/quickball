@@ -21,9 +21,5 @@ impl Ray {
 }
 
 pub fn cast(ray: Ray, collider: Collider) -> bool {
-	let from = (ray.origin + (ray.direction * ray.max_distance)).y;
-	let to = collider.bounds().pos.y;
-
-	println!("{}", from);
-	from >= to
+	(ray.origin + (ray.direction * ray.max_distance)).y >= collider.bounds().pos.y
 }

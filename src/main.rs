@@ -1,9 +1,9 @@
 mod collider;
-mod game_runner;
 mod player;
 mod raycast;
 mod rolly_game;
-use game_runner::*;
+mod time_stepper;
+use time_stepper::*;
 
 use quicksilver::{
 	input::{Event, Key},
@@ -11,26 +11,25 @@ use quicksilver::{
 };
 
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
-	let mut game_runner = TimeStepper::new();
-
+	let mut time_stepper = TimeStepper::new();
 	let mut running = true;
-	let mut _next_pressed = false;
+	let step_mode = false;
 
 	while running {
-		_next_pressed = false;
-
 		while let Some(event) = input.next_event().await {
 			if let Event::KeyboardInput(key) = event {
 				if key.key() == Key::Escape {
 					running = false
 				}
-				if key.key() == Key::N && key.is_down() {
-					_next_pressed = true
+				if step_mode && key.key() == Key::N && key.is_down() {
+					time_stepper.step(&input, &mut gfx, &window)?;
 				}
 			}
 		}
 
-		game_runner.step(&input, &mut gfx, &window)?;
+		if !step_mode {
+			time_stepper.timed_step(&input, &mut gfx, &window)?;
+		}
 	}
 
 	Ok(())
