@@ -16,7 +16,7 @@ use quicksilver::{
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
 	let mut time_stepper = time_stepper::TimeStepper::new();
 	let mut running = true;
-	let mut step_mode = config::load().step_mode;
+	let mut config = config::load();
 
 	while running {
 		while let Some(event) = input.next_event().await {
@@ -25,15 +25,15 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 					running = false
 				}
 				if key.key() == Key::L && key.is_down() {
-					step_mode = config::load().step_mode;
+					config = config::load();
 				}
-				if step_mode && key.key() == Key::N && key.is_down() {
+				if config.step_mode && key.key() == Key::N && key.is_down() {
 					time_stepper.step(&input, &mut gfx, &window)?;
 				}
 			}
 		}
 
-		if !step_mode {
+		if !config.step_mode {
 			time_stepper.timed_step(&input, &mut gfx, &window)?;
 		}
 	}

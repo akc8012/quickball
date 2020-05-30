@@ -1,4 +1,4 @@
-extern crate confy;
+use confy;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
