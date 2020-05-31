@@ -35,7 +35,8 @@ impl Player {
 	pub fn update(&mut self, input: &Input) {
 		self.fall();
 		if self.grounded() {
-			if !self.snap_to_ground() && self.can_jump(input) {
+			let snapped_this_frame = self.snap_to_ground();
+			if !snapped_this_frame && self.can_jump(input) {
 				self.jump();
 			}
 		}
