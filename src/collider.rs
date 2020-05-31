@@ -16,3 +16,9 @@ impl Collider {
 		self.bounds
 	}
 }
+
+impl Clone for Collider {
+	fn clone(&self) -> Self {
+		Collider { bounds: self.bounds }
+	}
+}
