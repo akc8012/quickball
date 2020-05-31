@@ -20,6 +20,6 @@ impl Ray {
 	}
 }
 
-pub fn cast(ray: Ray, collider: Collider) -> bool {
+pub fn cast(ray: Ray, collider: &Collider) -> bool {
 	(ray.origin + (ray.direction * ray.max_distance)).y >= collider.bounds().pos.y
 }

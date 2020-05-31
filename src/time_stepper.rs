@@ -18,7 +18,7 @@ impl TimeStepper {
 
 	pub fn timed_step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
 		while self.update_timer.tick() {
-			self.game.update(&input);
+			self.game.update(&input, window.size());
 		}
 
 		if self.draw_timer.exhaust().is_some() {
@@ -30,7 +30,7 @@ impl TimeStepper {
 	}
 
 	pub fn step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
-		self.game.update(&input);
+		self.game.update(&input, window.size());
 		self.game.draw(gfx);
 		gfx.present(&window)
 	}

@@ -1,5 +1,5 @@
 use crate::player::Player;
-use quicksilver::{graphics::Color, input::Key, Graphics, Input};
+use quicksilver::{geom::Vector, graphics::Color, input::Key, Graphics, Input};
 
 pub struct RollyGame {
 	player: Player,
@@ -12,8 +12,8 @@ impl RollyGame {
 		}
 	}
 
-	pub fn update(&mut self, input: &Input) {
-		self.player.update(input);
+	pub fn update(&mut self, input: &Input, size: Vector) {
+		self.player.update(input, size);
 
 		if input.key_down(Key::Space) {
 			self.player.reset();
