@@ -20,7 +20,7 @@ impl Ray {
 	}
 }
 
-pub fn cast(ray: Ray, colliders: &Vec<Collider>) -> bool {
+pub fn cast(ray: Ray, colliders: &[Collider]) -> bool {
 	for collider in colliders {
 		if (ray.origin + (ray.direction * ray.max_distance)).y >= collider.bounds().pos.y {
 			return true;

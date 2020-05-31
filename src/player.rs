@@ -32,7 +32,7 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn update(&mut self, input: &Input, colliders: &Vec<Collider>, _size: Vector) {
+	pub fn update(&mut self, input: &Input, colliders: &[Collider], _size: Vector) {
 		self.fall();
 
 		if self.grounded(colliders) {
@@ -53,7 +53,7 @@ impl Player {
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded(&self, colliders: &Vec<Collider>) -> bool {
+	fn grounded(&self, colliders: &[Collider]) -> bool {
 		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
 		raycast::cast(ray, colliders)
 	}
