@@ -63,7 +63,7 @@ impl Player {
 
 		let last_y = self.pos.y;
 		self.pos.y = ground.bounds().y() - self.radius;
-		last_y != self.pos.y
+		last_y < self.pos.y
 	}
 
 	fn can_jump(&self, input: &Input) -> bool {
