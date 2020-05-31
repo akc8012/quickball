@@ -23,7 +23,7 @@ impl Ray {
 pub fn cast(ray: Ray, colliders: &'_ [Collider]) -> Option<&'_ Collider> {
 	for collider in colliders {
 		let exceeding_y = (ray.origin + (ray.direction * ray.max_distance)).y >= collider.y();
-		let within_x = ray.origin.x > collider.x() && ray.origin.x < collider.top_right();
+		let within_x = ray.origin.x > collider.top_left().x && ray.origin.x < collider.top_right().x;
 
 		if exceeding_y && within_x {
 			return Some(collider);

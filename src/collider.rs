@@ -19,8 +19,12 @@ impl Collider {
 		self.bounds.y()
 	}
 
-	pub fn top_right(&self) -> f32 {
-		self.x() + self.width()
+	pub fn top_left(&self) -> Vector {
+		self.bounds.top_left()
+	}
+
+	pub fn top_right(&self) -> Vector {
+		(self.x() + self.width(), self.y()).into()
 	}
 
 	pub fn width(&self) -> f32 {
