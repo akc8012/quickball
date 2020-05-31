@@ -35,9 +35,7 @@ impl Player {
 	pub fn update(&mut self, input: &Input) {
 		self.fall();
 		if self.grounded() {
-			self.stick_to_ground();
-
-			if self.can_jump(input) {
+			if !self.snap_to_ground() && self.can_jump(input) {
 				self.jump();
 			}
 		}
@@ -60,9 +58,12 @@ impl Player {
 		raycast::cast(ray, floor)
 	}
 
-	fn stick_to_ground(&mut self) {
+	fn snap_to_ground(&mut self) -> bool {
 		self.vel.y = 0.0;
+
+		let last_y = self.pos.y;
 		self.pos.y = 480.0 - self.radius;
+		last_y != self.pos.y
 	}
 
 	fn can_jump(&self, input: &Input) -> bool {
@@ -77,6 +78,7 @@ impl Player {
 	}
 
 	fn set_jump_key_released(&mut self, input: &Input) {
+		// TODO: Base this off of framestamp
 		if !input.key_down(Key::W) {
 			self.jump_key_released = true;
 		}
