@@ -1,15 +1,22 @@
 use crate::player::Player;
-use quicksilver::{geom::Vector, graphics::Color, input::Key, Graphics, Input};
+use quicksilver::{
+	geom::{Rectangle, Vector},
+	graphics::Image,
+	input::Key,
+	Graphics, Input, Result,
+};
 
 pub struct RollyGame {
 	player: Player,
+	background: Image,
 }
 
 impl RollyGame {
-	pub fn new() -> Self {
-		RollyGame {
+	pub async fn new(gfx: &Graphics) -> Result<Self> {
+		Ok(RollyGame {
 			player: Player::new(),
-		}
+			background: Image::load(gfx, "background.png").await?,
+		})
 	}
 
 	pub fn update(&mut self, input: &Input, size: Vector) {
@@ -21,7 +28,9 @@ impl RollyGame {
 	}
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
-		gfx.clear(Color::from_hex("ade7ff"));
+		let region = Rectangle::new(Vector::ZERO, self.background.size());
+		gfx.draw_image(&self.background, region);
+
 		self.player.draw(gfx);
 	}
 }

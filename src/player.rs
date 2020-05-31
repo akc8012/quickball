@@ -35,7 +35,7 @@ impl Player {
 	pub fn update(&mut self, input: &Input, size: Vector) {
 		self.fall();
 
-		let ground = Collider::new((0.0, size.y), (size.x, 32.0));
+		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
 		if self.grounded(&ground) {
 			let snapped_this_frame = self.snap_to_ground(&ground);
 			if !snapped_this_frame && self.can_jump(input) {

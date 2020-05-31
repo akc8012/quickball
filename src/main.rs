@@ -14,7 +14,7 @@ use quicksilver::{
 };
 
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
-	let mut time_stepper = time_stepper::TimeStepper::new();
+	let mut time_stepper = time_stepper::TimeStepper::new(&gfx).await?;
 	let mut running = true;
 	let mut config = config::load();
 
