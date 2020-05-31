@@ -20,10 +20,10 @@ impl Ray {
 	}
 }
 
-pub fn cast(ray: Ray, colliders: &[Collider]) -> Option<Collider> {
+pub fn cast<'a>(ray: Ray, colliders: &'a [Collider]) -> Option<&'a Collider> {
 	for collider in colliders {
 		if (ray.origin + (ray.direction * ray.max_distance)).y >= collider.bounds().pos.y {
-			return Some(collider.clone());
+			return Some(collider);
 		}
 	}
 	None

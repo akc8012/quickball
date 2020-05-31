@@ -52,12 +52,12 @@ impl Player {
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded(&self, colliders: &[Collider]) -> Option<Collider> {
+	fn grounded<'a>(&self, colliders: &'a [Collider]) -> Option<&'a Collider> {
 		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
 		raycast::cast(ray, colliders)
 	}
 
-	fn snap_to_ground(&mut self, ground: Collider) -> bool {
+	fn snap_to_ground(&mut self, ground: &Collider) -> bool {
 		self.vel.y = 0.0;
 
 		let last_y = self.pos.y;
