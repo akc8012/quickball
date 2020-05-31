@@ -100,6 +100,9 @@ impl Player {
 	}
 
 	pub fn draw(&self, image: &Image, gfx: &mut Graphics) {
-		gfx.draw_image(&image, Rectangle::new(self.pos - (Vector::ONE * self.radius), image.size()));
+		gfx.draw_image(
+			&image,
+			Rectangle::new(self.pos - (Vector::ONE * self.radius), image.size()),
+		);
 	}
 }
