@@ -10,6 +10,7 @@ pub struct RollyGame {
 	player: Player,
 	colliders: Vec<Collider>,
 	background: Image,
+	ball: Image, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
 
 impl RollyGame {
@@ -22,6 +23,7 @@ impl RollyGame {
 			player: Player::new(),
 			colliders: vec![ground, platform],
 			background: Image::load(gfx, "background.png").await?,
+			ball: Image::load(gfx, "ball.png").await?,
 		})
 	}
 
@@ -34,6 +36,7 @@ impl RollyGame {
 	}
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
+		// background
 		gfx.draw_image(
 			&self.background,
 			Rectangle::new(Vector::ZERO, self.background.size()),
@@ -42,6 +45,6 @@ impl RollyGame {
 		// platform
 		gfx.fill_rect(&Rectangle::new((525, 400), (128, 10)), Color::GREEN);
 
-		self.player.draw(gfx);
+		self.player.draw(&self.ball, gfx);
 	}
 }

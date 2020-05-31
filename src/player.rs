@@ -1,6 +1,6 @@
 use quicksilver::{
-	geom::{Circle, Vector},
-	graphics::Color,
+	geom::{Rectangle, Vector},
+	graphics::Image,
 	input::Key,
 	Graphics, Input,
 };
@@ -99,7 +99,7 @@ impl Player {
 		self.pos += self.vel;
 	}
 
-	pub fn draw(&self, gfx: &mut Graphics) {
-		gfx.fill_circle(&Circle::new(self.pos, self.radius), Color::from_hex("4f30d9"));
+	pub fn draw(&self, image: &Image, gfx: &mut Graphics) {
+		gfx.draw_image(&image, Rectangle::new(self.pos - (Vector::ONE * self.radius), image.size()));
 	}
 }
