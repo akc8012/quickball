@@ -53,7 +53,10 @@ impl Player {
 	}
 
 	fn grounded<'a>(&self, colliders: &'a [Collider]) -> Option<&'a Collider> {
-		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
+		let direction = (0.0, 1.0).into();
+		let distance = self.radius + self.vel.y;
+
+		let ray = Ray::new(self.pos, direction, Some(distance));
 		raycast::cast(ray, colliders)
 	}
 
@@ -61,7 +64,7 @@ impl Player {
 		self.vel.y = 0.0;
 
 		let last_y = self.pos.y;
-		self.pos.y = ground.bounds().y() - self.radius;
+		self.pos.y = ground.y() - self.radius;
 		self.pos.y > last_y
 	}
 
