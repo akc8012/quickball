@@ -32,12 +32,13 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn update(&mut self, input: &Input) {
+	pub fn update(&mut self, input: &Input, colliders: &[Collider], _size: Vector) {
 		self.fall();
-		if self.grounded() {
-			self.stick_to_ground();
 
-			if self.can_jump(input) {
+		if self.grounded(colliders) {
+			// TODO: Can't just rely on ground being the first Collider!!
+			let snapped_this_frame = self.snap_to_ground(&colliders[0]);
+			if !snapped_this_frame && self.can_jump(input) {
 				self.jump();
 			}
 		}
@@ -52,17 +53,17 @@ impl Player {
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded(&self) -> bool {
-		// TODO: Pass in resolution
+	fn grounded(&self, colliders: &[Collider]) -> bool {
 		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
-		let floor = Collider::new((0.0, 480.0), (854.0, 32.0));
-
-		raycast::cast(ray, floor)
+		raycast::cast(ray, colliders)
 	}
 
-	fn stick_to_ground(&mut self) {
+	fn snap_to_ground(&mut self, ground: &Collider) -> bool {
 		self.vel.y = 0.0;
-		self.pos.y = 480.0 - self.radius;
+
+		let last_y = self.pos.y;
+		self.pos.y = ground.bounds().y() - self.radius;
+		self.pos.y > last_y
 	}
 
 	fn can_jump(&self, input: &Input) -> bool {
@@ -77,6 +78,7 @@ impl Player {
 	}
 
 	fn set_jump_key_released(&mut self, input: &Input) {
+		// TODO: Base this off of framestamp
 		if !input.key_down(Key::W) {
 			self.jump_key_released = true;
 		}
