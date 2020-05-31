@@ -8,9 +8,9 @@ pub struct TimeStepper {
 }
 
 impl TimeStepper {
-	pub async fn new(gfx: &Graphics) -> Result<Self> {
+	pub async fn new(gfx: &Graphics, window: &Window) -> Result<Self> {
 		Ok(Self {
-			game: RollyGame::new(gfx).await?,
+			game: RollyGame::new(gfx, window.size()).await?,
 			update_timer: Timer::time_per_second(60.0),
 			draw_timer: Timer::time_per_second(60.0),
 		})

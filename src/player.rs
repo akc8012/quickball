@@ -32,12 +32,12 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn update(&mut self, input: &Input, size: Vector) {
+	pub fn update(&mut self, input: &Input, colliders: &Vec<Collider>, _size: Vector) {
 		self.fall();
 
-		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
-		if self.grounded(&ground) {
-			let snapped_this_frame = self.snap_to_ground(&ground);
+		if self.grounded(colliders) {
+			// TODO: Can't just rely on ground being the first Collider!!
+			let snapped_this_frame = self.snap_to_ground(&colliders[0]);
 			if !snapped_this_frame && self.can_jump(input) {
 				self.jump();
 			}
@@ -53,9 +53,9 @@ impl Player {
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded(&self, ground: &Collider) -> bool {
+	fn grounded(&self, colliders: &Vec<Collider>) -> bool {
 		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
-		raycast::cast(ray, ground)
+		raycast::cast(ray, colliders)
 	}
 
 	fn snap_to_ground(&mut self, ground: &Collider) -> bool {

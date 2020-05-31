@@ -1,4 +1,4 @@
-use crate::player::Player;
+use crate::{collider::Collider, player::Player};
 use quicksilver::{
 	geom::{Rectangle, Vector},
 	graphics::Image,
@@ -8,19 +8,24 @@ use quicksilver::{
 
 pub struct RollyGame {
 	player: Player,
+	colliders: Vec<Collider>,
 	background: Image,
 }
 
 impl RollyGame {
-	pub async fn new(gfx: &Graphics) -> Result<Self> {
+	// TODO: window size as RollyGame field
+	pub async fn new(gfx: &Graphics, size: Vector) -> Result<Self> {
+		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
+
 		Ok(RollyGame {
 			player: Player::new(),
+			colliders: vec![ground],
 			background: Image::load(gfx, "background.png").await?,
 		})
 	}
 
 	pub fn update(&mut self, input: &Input, size: Vector) {
-		self.player.update(input, size);
+		self.player.update(input, &self.colliders, size);
 
 		if input.key_down(Key::Space) {
 			self.player.reset();
