@@ -8,12 +8,12 @@ pub struct TimeStepper {
 }
 
 impl TimeStepper {
-	pub async fn new(gfx: &Graphics, window: &Window) -> Result<Self> {
-		Ok(Self {
-			game: RollyGame::new(gfx, window.size()).await?,
+	pub fn new(game: RollyGame) -> Self {
+		Self {
+			game,
 			update_timer: Timer::time_per_second(60.0),
 			draw_timer: Timer::time_per_second(60.0),
-		})
+		}
 	}
 
 	pub fn timed_step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {

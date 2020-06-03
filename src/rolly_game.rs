@@ -1,4 +1,4 @@
-use crate::{collider::Collider, player::Player};
+use crate::{collider::Collider, config::Config, player::Player};
 use quicksilver::{
 	geom::{Rectangle, Vector},
 	graphics::{Color, Image},
@@ -9,21 +9,30 @@ use quicksilver::{
 pub struct RollyGame {
 	player: Player,
 	colliders: Vec<Collider>,
-	background: Image,
-	ball: Image, // TODO: Something more formalized to load resources: A method loading a map of images?
+	background: Option<Image>,
+	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
 
 impl RollyGame {
 	// TODO: window size as RollyGame field
-	pub async fn new(gfx: &Graphics, size: Vector) -> Result<Self> {
+	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
 		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
 		let platform = Collider::new((525, 400), (128, 10));
 
 		Ok(RollyGame {
 			player: Player::new(),
 			colliders: vec![ground, platform],
-			background: Image::load(gfx, "background.png").await?,
-			ball: Image::load(gfx, "ball.png").await?,
+			// TODO: clean up
+			background: if config.load_art {
+				Some(Image::load(gfx, "background.png").await?)
+			} else {
+				None
+			},
+			ball: if config.load_art {
+				Some(Image::load(gfx, "ball.png").await?)
+			} else {
+				None
+			},
 		})
 	}
 
@@ -37,10 +46,11 @@ impl RollyGame {
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
 		// background
-		gfx.draw_image(
-			&self.background,
-			Rectangle::new(Vector::ZERO, self.background.size()),
-		);
+		if let Some(background) = &self.background {
+			gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size()));
+		} else {
+			gfx.clear(Color::from_hex("ade7ff"));
+		}
 
 		// platform
 		gfx.fill_rect(&Rectangle::new((525, 400), (128, 10)), Color::GREEN);
