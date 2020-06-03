@@ -22,7 +22,7 @@ impl Player {
 		Player {
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
-			radius: 16.0,
+			radius: 16.,
 			jump_key_released: true,
 		}
 	}
@@ -53,7 +53,7 @@ impl Player {
 	}
 
 	fn grounded<'a>(&self, colliders: &'a [Collider]) -> Option<&'a Collider> {
-		let direction = (0.0, 1.0).into();
+		let direction = (0., 1.).into();
 		let distance = self.radius + self.vel.y;
 
 		let ray = Ray::new(self.pos, direction, Some(distance));
@@ -61,7 +61,7 @@ impl Player {
 	}
 
 	fn snap_to_ground(&mut self, ground: &Collider) -> bool {
-		self.vel.y = 0.0;
+		self.vel.y = 0.;
 
 		let last_y = self.pos.y;
 		self.pos.y = ground.y() - self.radius;
@@ -87,8 +87,8 @@ impl Player {
 	}
 
 	fn roll(&mut self, input: &Input) {
-		const ROLL_SPEED: f32 = 4.0;
-		self.vel.x = 0.0;
+		const ROLL_SPEED: f32 = 4.;
+		self.vel.x = 0.;
 
 		if input.key_down(Key::A) || input.key_down(Key::Left) {
 			self.vel.x -= ROLL_SPEED;
