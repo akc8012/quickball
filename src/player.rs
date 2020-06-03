@@ -73,7 +73,7 @@ impl Player {
 	}
 
 	fn jump(&mut self) {
-		const JUMP_HEIGHT: f32 = 20.0;
+		const JUMP_HEIGHT: f32 = 20.;
 
 		self.vel.y -= JUMP_HEIGHT;
 		self.jump_key_released = false;
