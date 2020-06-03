@@ -7,7 +7,7 @@ use quicksilver::{
 
 use crate::{
 	collider::Collider,
-	raycast::{self, Ray},
+	raycast::{self, Hit, Ray},
 };
 
 pub struct Player {
@@ -35,8 +35,8 @@ impl Player {
 	pub fn update(&mut self, input: &Input, colliders: &[Collider], _size: Vector) {
 		self.fall();
 
-		if let Some(collider) = self.grounded(colliders) {
-			let snapped_this_frame = self.snap_to_ground(collider);
+		if let Some(hit) = self.grounded(colliders) {
+			let snapped_this_frame = self.snap_to_ground(hit);
 			if !snapped_this_frame && self.can_jump(input) {
 				self.jump();
 			}
@@ -48,23 +48,42 @@ impl Player {
 	}
 
 	fn fall(&mut self) {
-		const GRAVITY: f32 = 2.0;
+		const GRAVITY: f32 = 2.;
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded<'a>(&self, colliders: &'a [Collider]) -> Option<&'a Collider> {
+	fn grounded(&self, colliders: &[Collider]) -> Option<Hit> {
 		let direction = (0., 1.).into();
 		let distance = self.radius + self.vel.y;
 
-		let ray = Ray::new(self.pos, direction, Some(distance));
-		raycast::cast(ray, colliders)
+		let rays = vec![
+			Ray::new(self.pos, direction, Some(distance)),
+			Ray::new(
+				self.pos - (self.radius * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+			Ray::new(
+				self.pos + (self.radius * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+		];
+
+		for ray in rays {
+			if let Some(hit) = raycast::cast(ray, colliders) {
+				return Some(hit);
+			}
+		}
+
+		None
 	}
 
-	fn snap_to_ground(&mut self, ground: &Collider) -> bool {
-		self.vel.y = 0.;
-
+	fn snap_to_ground(&mut self, hit: Hit) -> bool {
 		let last_y = self.pos.y;
-		self.pos.y = ground.y() - self.radius;
+		self.pos.y = hit.point.y - hit.distance.y + self.vel.y;
+
+		self.vel.y = 0.;
 		self.pos.y > last_y
 	}
 
