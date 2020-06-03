@@ -56,6 +56,11 @@ impl RollyGame {
 			collider.draw(gfx);
 		}
 
+		// points
+		for x in 0..10 {
+			gfx.draw_point((x, 10).into(), Color::GREEN);
+		}
+
 		self.player.draw(&self.ball, gfx);
 	}
 }

@@ -4,6 +4,18 @@ use quicksilver::{
 	Graphics,
 };
 
+pub trait Collide {
+	fn x(&self) -> f32;
+
+	fn y(&self) -> f32;
+
+	fn top_left(&self) -> Vector;
+
+	fn top_right(&self) -> Vector;
+
+	fn width(&self) -> f32;
+}
+
 pub struct Collider {
 	bounds: Rectangle,
 }
@@ -15,28 +27,30 @@ impl Collider {
 		}
 	}
 
-	pub fn x(&self) -> f32 {
+	pub fn draw(&self, gfx: &mut Graphics) {
+		gfx.fill_rect(&self.bounds, Color::GREEN);
+	}
+}
+
+impl Collide for Collider {
+	fn x(&self) -> f32 {
 		self.bounds.x()
 	}
 
-	pub fn y(&self) -> f32 {
+	fn y(&self) -> f32 {
 		self.bounds.y()
 	}
 
-	pub fn top_left(&self) -> Vector {
+	fn top_left(&self) -> Vector {
 		self.bounds.top_left()
 	}
 
-	pub fn top_right(&self) -> Vector {
+	fn top_right(&self) -> Vector {
 		(self.x() + self.width(), self.y()).into()
 	}
 
-	pub fn width(&self) -> f32 {
+	fn width(&self) -> f32 {
 		self.bounds.width()
-	}
-
-	pub fn draw(&self, gfx: &mut Graphics) {
-		gfx.fill_rect(&self.bounds, Color::GREEN);
 	}
 }
 
