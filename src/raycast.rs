@@ -1,4 +1,4 @@
-use crate::collider::{Collide, Collider};
+use crate::collider::{Collide, RectangleCollider};
 use quicksilver::geom::Vector;
 
 pub struct Ray {
@@ -25,7 +25,7 @@ pub struct Hit {
 	pub distance: Vector,
 }
 
-pub fn cast(ray: Ray, colliders: &[Collider]) -> Option<Hit> {
+pub fn cast(ray: Ray, colliders: &[RectangleCollider]) -> Option<Hit> {
 	for collider in colliders {
 		let distance = ray.direction * ray.max_distance;
 		let exceeding_y = (ray.origin + distance).y >= collider.y();

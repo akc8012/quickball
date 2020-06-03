@@ -1,4 +1,4 @@
-use crate::{collider::Collider, config::Config, player::Player};
+use crate::{collider::RectangleCollider, config::Config, player::Player};
 use quicksilver::{
 	geom::{Rectangle, Vector},
 	graphics::{Color, Image},
@@ -8,7 +8,7 @@ use quicksilver::{
 
 pub struct RollyGame {
 	player: Player,
-	colliders: Vec<Collider>,
+	colliders: Vec<RectangleCollider>,
 	background: Option<Image>,
 	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
@@ -16,8 +16,8 @@ pub struct RollyGame {
 impl RollyGame {
 	// TODO: window size as RollyGame field
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
-		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
-		let platform = Collider::new((525, 400), (128, 10));
+		let ground = RectangleCollider::new((0.0, size.y - 20.0), (size.x, 32.0));
+		let platform = RectangleCollider::new((525, 400), (128, 10));
 
 		Ok(RollyGame {
 			player: Player::new(),

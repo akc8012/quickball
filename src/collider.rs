@@ -16,11 +16,11 @@ pub trait Collide {
 	fn width(&self) -> f32;
 }
 
-pub struct Collider {
+pub struct RectangleCollider {
 	bounds: Rectangle,
 }
 
-impl Collider {
+impl RectangleCollider {
 	pub fn new(pos: impl Into<Vector>, size: impl Into<Vector>) -> Self {
 		Self {
 			bounds: Rectangle::new(pos, size),
@@ -32,7 +32,7 @@ impl Collider {
 	}
 }
 
-impl Collide for Collider {
+impl Collide for RectangleCollider {
 	fn x(&self) -> f32 {
 		self.bounds.x()
 	}
@@ -54,8 +54,8 @@ impl Collide for Collider {
 	}
 }
 
-impl Clone for Collider {
+impl Clone for RectangleCollider {
 	fn clone(&self) -> Self {
-		Collider { bounds: self.bounds }
+		RectangleCollider { bounds: self.bounds }
 	}
 }
