@@ -1,4 +1,8 @@
-use quicksilver::geom::{Rectangle, Vector};
+use quicksilver::{
+	geom::{Rectangle, Vector},
+	graphics::Color,
+	Graphics,
+};
 
 pub struct Collider {
 	bounds: Rectangle,
@@ -29,6 +33,10 @@ impl Collider {
 
 	pub fn width(&self) -> f32 {
 		self.bounds.width()
+	}
+
+	pub fn draw(&self, gfx: &mut Graphics) {
+		gfx.fill_rect(&self.bounds, Color::GREEN);
 	}
 }
 

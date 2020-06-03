@@ -52,8 +52,9 @@ impl RollyGame {
 			gfx.clear(Color::from_hex("ade7ff"));
 		}
 
-		// platform
-		gfx.fill_rect(&Rectangle::new((525, 400), (128, 10)), Color::GREEN);
+		for collider in &self.colliders {
+			collider.draw(gfx);
+		}
 
 		self.player.draw(&self.ball, gfx);
 	}
