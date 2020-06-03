@@ -1,13 +1,13 @@
 use quicksilver::{
-	geom::{Circle, Vector},
-	graphics::Color,
+	geom::{Circle, Rectangle, Vector},
+	graphics::{Color, Image},
 	input::Key,
 	Graphics, Input,
 };
 
 use crate::{
 	collider::Collider,
-	raycast::{self, Ray},
+	raycast::{self, Hit, Ray},
 };
 
 pub struct Player {
@@ -22,7 +22,7 @@ impl Player {
 		Player {
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
-			radius: 16.0,
+			radius: 16.,
 			jump_key_released: true,
 		}
 	}
@@ -35,9 +35,8 @@ impl Player {
 	pub fn update(&mut self, input: &Input, colliders: &[Collider], _size: Vector) {
 		self.fall();
 
-		if self.grounded(colliders) {
-			// TODO: Can't just rely on ground being the first Collider!!
-			let snapped_this_frame = self.snap_to_ground(&colliders[0]);
+		if let Some(hit) = self.grounded(colliders) {
+			let snapped_this_frame = self.snap_to_ground(hit);
 			if !snapped_this_frame && self.can_jump(input) {
 				self.jump();
 			}
@@ -49,20 +48,42 @@ impl Player {
 	}
 
 	fn fall(&mut self) {
-		const GRAVITY: f32 = 2.0;
+		const GRAVITY: f32 = 2.;
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded(&self, colliders: &[Collider]) -> bool {
-		let ray = Ray::new(self.pos, (0.0, 1.0).into(), Some(self.radius + self.vel.y));
-		raycast::cast(ray, colliders)
+	fn grounded(&self, colliders: &[Collider]) -> Option<Hit> {
+		let direction = (0., 1.).into();
+		let distance = self.radius + self.vel.y;
+
+		let rays = vec![
+			Ray::new(self.pos, direction, Some(distance)),
+			Ray::new(
+				self.pos - (self.radius * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+			Ray::new(
+				self.pos + (self.radius * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+		];
+
+		for ray in rays {
+			if let Some(hit) = raycast::cast(ray, colliders) {
+				return Some(hit);
+			}
+		}
+
+		None
 	}
 
-	fn snap_to_ground(&mut self, ground: &Collider) -> bool {
-		self.vel.y = 0.0;
-
+	fn snap_to_ground(&mut self, hit: Hit) -> bool {
 		let last_y = self.pos.y;
-		self.pos.y = ground.bounds().y() - self.radius;
+		self.pos.y = hit.point.y - hit.distance.y + self.vel.y;
+
+		self.vel.y = 0.;
 		self.pos.y > last_y
 	}
 
@@ -71,7 +92,7 @@ impl Player {
 	}
 
 	fn jump(&mut self) {
-		const JUMP_HEIGHT: f32 = 20.0;
+		const JUMP_HEIGHT: f32 = 20.;
 
 		self.vel.y -= JUMP_HEIGHT;
 		self.jump_key_released = false;
@@ -85,8 +106,8 @@ impl Player {
 	}
 
 	fn roll(&mut self, input: &Input) {
-		const ROLL_SPEED: f32 = 4.0;
-		self.vel.x = 0.0;
+		const ROLL_SPEED: f32 = 4.;
+		self.vel.x = 0.;
 
 		if input.key_down(Key::A) || input.key_down(Key::Left) {
 			self.vel.x -= ROLL_SPEED;
@@ -100,7 +121,14 @@ impl Player {
 		self.pos += self.vel;
 	}
 
-	pub fn draw(&self, gfx: &mut Graphics) {
-		gfx.fill_circle(&Circle::new(self.pos, self.radius), Color::from_hex("4f30d9"));
+	pub fn draw(&self, image: &Option<Image>, gfx: &mut Graphics) {
+		if let Some(image) = image {
+			gfx.draw_image(
+				image,
+				Rectangle::new(self.pos - (Vector::ONE * self.radius), image.size()),
+			);
+		} else {
+			gfx.fill_circle(&Circle::new(self.pos, self.radius), Color::from_hex("4f30d9"));
+		}
 	}
 }

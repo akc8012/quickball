@@ -1,7 +1,7 @@
-use crate::{collider::Collider, player::Player};
+use crate::{collider::Collider, config::Config, player::Player};
 use quicksilver::{
 	geom::{Rectangle, Vector},
-	graphics::Image,
+	graphics::{Color, Image},
 	input::Key,
 	Graphics, Input, Result,
 };
@@ -9,18 +9,30 @@ use quicksilver::{
 pub struct RollyGame {
 	player: Player,
 	colliders: Vec<Collider>,
-	background: Image,
+	background: Option<Image>,
+	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
 
 impl RollyGame {
 	// TODO: window size as RollyGame field
-	pub async fn new(gfx: &Graphics, size: Vector) -> Result<Self> {
+	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
 		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
+		let platform = Collider::new((525, 400), (128, 10));
 
 		Ok(RollyGame {
 			player: Player::new(),
-			colliders: vec![ground],
-			background: Image::load(gfx, "background.png").await?,
+			colliders: vec![ground, platform],
+			// TODO: clean up
+			background: if config.load_art {
+				Some(Image::load(gfx, "background.png").await?)
+			} else {
+				None
+			},
+			ball: if config.load_art {
+				Some(Image::load(gfx, "ball.png").await?)
+			} else {
+				None
+			},
 		})
 	}
 
@@ -33,9 +45,17 @@ impl RollyGame {
 	}
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
-		let region = Rectangle::new(Vector::ZERO, self.background.size());
-		gfx.draw_image(&self.background, region);
+		// background
+		if let Some(background) = &self.background {
+			gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size()));
+		} else {
+			gfx.clear(Color::from_hex("ade7ff"));
+		}
 
-		self.player.draw(gfx);
+		for collider in &self.colliders {
+			collider.draw(gfx);
+		}
+
+		self.player.draw(&self.ball, gfx);
 	}
 }

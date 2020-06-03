@@ -1,11 +1,15 @@
 #[derive(Serialize, Deserialize)]
 pub struct Config {
 	pub step_mode: bool,
+	pub load_art: bool,
 }
 
 impl Default for Config {
 	fn default() -> Self {
-		Config { step_mode: false }
+		Config {
+			step_mode: false,
+			load_art: true,
+		}
 	}
 }
 

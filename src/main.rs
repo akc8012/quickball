@@ -4,6 +4,7 @@ mod player;
 mod raycast;
 mod rolly_game;
 mod time_stepper;
+use rolly_game::RollyGame;
 
 #[macro_use]
 extern crate serde_derive;
@@ -14,9 +15,12 @@ use quicksilver::{
 };
 
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
-	let mut time_stepper = time_stepper::TimeStepper::new(&gfx, &window).await?;
-	let mut running = true;
 	let mut config = config::load();
+
+	let game = RollyGame::new(&config, &gfx, window.size()).await?;
+	let mut time_stepper = time_stepper::TimeStepper::new(game);
+
+	let mut running = true;
 
 	while running {
 		while let Some(event) = input.next_event().await {

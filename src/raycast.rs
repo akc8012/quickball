@@ -2,9 +2,9 @@ use crate::collider::Collider;
 use quicksilver::geom::Vector;
 
 pub struct Ray {
-	origin: Vector,
-	direction: Vector,
-	max_distance: f32,
+	pub origin: Vector,
+	pub direction: Vector,
+	pub max_distance: f32,
 }
 
 impl Ray {
@@ -20,11 +20,22 @@ impl Ray {
 	}
 }
 
-pub fn cast(ray: Ray, colliders: &[Collider]) -> bool {
+pub struct Hit {
+	pub point: Vector,
+	pub distance: Vector,
+}
+
+pub fn cast(ray: Ray, colliders: &[Collider]) -> Option<Hit> {
 	for collider in colliders {
-		if (ray.origin + (ray.direction * ray.max_distance)).y >= collider.bounds().pos.y {
-			return true;
+		let distance = ray.direction * ray.max_distance;
+
+		let exceeding_y = (ray.origin + distance).y >= collider.y();
+		let within_x = ray.origin.x > collider.top_left().x && ray.origin.x < collider.top_right().x;
+
+		if exceeding_y && within_x {
+			let point = (ray.origin.x, collider.y()).into();
+			return Some(Hit { point, distance });
 		}
 	}
-	false
+	None
 }

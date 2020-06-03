@@ -2,6 +2,7 @@ NOTES:
   build for web: cargo web start --features stdweb
 
 TODO:
+  config singleton
   Add web build check to CI
   Test (framerate) on mobile
   Look into component pattern
