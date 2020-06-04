@@ -25,9 +25,11 @@ pub struct RectangleCollider {
 
 impl RectangleCollider {
 	pub fn new(pos: impl Into<Vector>, size: impl Into<Vector>) -> Self {
-		Self {
-			bounds: Rectangle::new(pos, size),
-		}
+		let mut bounds = Rectangle::new(pos, size);
+		bounds.pos = (bounds.pos.x.round(), bounds.pos.y.round()).into();
+		bounds.size = (bounds.size.x.round(), bounds.size.y.round()).into();
+
+		Self { bounds }
 	}
 }
 
@@ -69,7 +71,9 @@ pub struct PointCollider {
 
 impl PointCollider {
 	pub fn new(point: Vector) -> Self {
-		Self { point }
+		Self {
+			point: (point.x.round(), point.y.round()).into(),
+		}
 	}
 }
 
@@ -83,12 +87,10 @@ impl Collide for PointCollider {
 	}
 
 	fn top_left(&self) -> Vector {
-		// (self.point.x - 1., self.point.y).into()
 		self.point
 	}
 
 	fn top_right(&self) -> Vector {
-		// (self.point.x + 1., self.point.y).into()
 		self.point
 	}
 
