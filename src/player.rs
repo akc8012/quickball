@@ -6,7 +6,7 @@ use quicksilver::{
 };
 
 use crate::{
-	collider::RectangleCollider,
+	collider::Collide,
 	raycast::{self, Hit, Ray},
 };
 
@@ -32,7 +32,7 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn update(&mut self, input: &Input, colliders: &[RectangleCollider], _size: Vector) {
+	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>], _size: Vector) {
 		self.fall();
 
 		if let Some(hit) = self.grounded(colliders) {
@@ -52,7 +52,7 @@ impl Player {
 		self.vel.y += GRAVITY;
 	}
 
-	fn grounded(&self, colliders: &[RectangleCollider]) -> Option<Hit> {
+	fn grounded(&self, colliders: &[Box<dyn Collide>]) -> Option<Hit> {
 		let direction = (0., 1.).into();
 		let distance = self.radius + self.vel.y;
 

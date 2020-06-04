@@ -14,6 +14,9 @@ pub trait Collide {
 	fn top_right(&self) -> Vector;
 
 	fn width(&self) -> f32;
+
+	// TODO: THIS SHOULD BE ON A DIFFERENT TRAIT
+	fn draw(&self, gfx: &mut Graphics);
 }
 
 pub struct RectangleCollider {
@@ -25,10 +28,6 @@ impl RectangleCollider {
 		Self {
 			bounds: Rectangle::new(pos, size),
 		}
-	}
-
-	pub fn draw(&self, gfx: &mut Graphics) {
-		gfx.fill_rect(&self.bounds, Color::GREEN);
 	}
 }
 
@@ -51,6 +50,10 @@ impl Collide for RectangleCollider {
 
 	fn width(&self) -> f32 {
 		self.bounds.width()
+	}
+
+	fn draw(&self, gfx: &mut Graphics) {
+		gfx.fill_rect(&self.bounds, Color::GREEN);
 	}
 }
 
