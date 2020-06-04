@@ -4,44 +4,101 @@ use quicksilver::{
 	Graphics,
 };
 
-pub struct Collider {
+pub trait Collide {
+	fn x(&self) -> f32;
+
+	fn y(&self) -> f32;
+
+	fn top_left(&self) -> Vector;
+
+	fn top_right(&self) -> Vector;
+
+	fn width(&self) -> f32;
+
+	// TODO: THIS SHOULD BE ON A DIFFERENT TRAIT
+	fn draw(&self, gfx: &mut Graphics);
+}
+
+pub struct RectangleCollider {
 	bounds: Rectangle,
 }
 
-impl Collider {
+impl RectangleCollider {
 	pub fn new(pos: impl Into<Vector>, size: impl Into<Vector>) -> Self {
-		Self {
-			bounds: Rectangle::new(pos, size),
-		}
-	}
+		let mut bounds = Rectangle::new(pos, size);
+		bounds.pos = (bounds.pos.x.round(), bounds.pos.y.round()).into();
+		bounds.size = (bounds.size.x.round(), bounds.size.y.round()).into();
 
-	pub fn x(&self) -> f32 {
+		Self { bounds }
+	}
+}
+
+impl Collide for RectangleCollider {
+	fn x(&self) -> f32 {
 		self.bounds.x()
 	}
 
-	pub fn y(&self) -> f32 {
+	fn y(&self) -> f32 {
 		self.bounds.y()
 	}
 
-	pub fn top_left(&self) -> Vector {
+	fn top_left(&self) -> Vector {
 		self.bounds.top_left()
 	}
 
-	pub fn top_right(&self) -> Vector {
+	fn top_right(&self) -> Vector {
 		(self.x() + self.width(), self.y()).into()
 	}
 
-	pub fn width(&self) -> f32 {
+	fn width(&self) -> f32 {
 		self.bounds.width()
 	}
 
-	pub fn draw(&self, gfx: &mut Graphics) {
+	fn draw(&self, gfx: &mut Graphics) {
 		gfx.fill_rect(&self.bounds, Color::GREEN);
 	}
 }
 
-impl Clone for Collider {
+impl Clone for RectangleCollider {
 	fn clone(&self) -> Self {
-		Collider { bounds: self.bounds }
+		RectangleCollider { bounds: self.bounds }
+	}
+}
+
+pub struct PointCollider {
+	point: Vector,
+}
+
+impl PointCollider {
+	pub fn new(point: Vector) -> Self {
+		Self {
+			point: (point.x.round(), point.y.round()).into(),
+		}
+	}
+}
+
+impl Collide for PointCollider {
+	fn x(&self) -> f32 {
+		self.point.x
+	}
+
+	fn y(&self) -> f32 {
+		self.point.y
+	}
+
+	fn top_left(&self) -> Vector {
+		self.point
+	}
+
+	fn top_right(&self) -> Vector {
+		self.point
+	}
+
+	fn width(&self) -> f32 {
+		1.
+	}
+
+	fn draw(&self, gfx: &mut Graphics) {
+		gfx.draw_point(self.point, Color::GREEN);
 	}
 }

@@ -1,4 +1,8 @@
-use crate::{collider::Collider, config::Config, player::Player};
+use crate::{
+	collider::{Collide, PointCollider, RectangleCollider},
+	config::Config,
+	player::Player,
+};
 use quicksilver::{
 	geom::{Rectangle, Vector},
 	graphics::{Color, Image},
@@ -8,7 +12,7 @@ use quicksilver::{
 
 pub struct RollyGame {
 	player: Player,
-	colliders: Vec<Collider>,
+	colliders: Vec<Box<dyn Collide>>,
 	background: Option<Image>,
 	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
@@ -16,12 +20,9 @@ pub struct RollyGame {
 impl RollyGame {
 	// TODO: window size as RollyGame field
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
-		let ground = Collider::new((0.0, size.y - 20.0), (size.x, 32.0));
-		let platform = Collider::new((525, 400), (128, 10));
-
 		Ok(RollyGame {
 			player: Player::new(),
-			colliders: vec![ground, platform],
+			colliders: RollyGame::create_colliders(size),
 			// TODO: clean up
 			background: if config.load_art {
 				Some(Image::load(gfx, "background.png").await?)
@@ -36,7 +37,47 @@ impl RollyGame {
 		})
 	}
 
+	fn create_colliders(size: Vector) -> Vec<Box<dyn Collide>> {
+		let mut colliders: Vec<Box<dyn Collide>> = Vec::new();
+
+		// ground
+		colliders.push(Box::new(RectangleCollider::new(
+			(0.0, size.y - 20.0),
+			(size.x, 32.0),
+		)));
+
+		// platform
+		colliders.push(Box::new(RectangleCollider::new((525, 400), (128, 10))));
+
+		// points
+		for x in 0..300 {
+			for y in 380..383 {
+				colliders.push(Box::new(PointCollider::new((x, y).into())));
+			}
+		}
+
+		colliders
+	}
+
 	pub fn update(&mut self, input: &Input, size: Vector) {
+		// print mouse location
+		if input.key_down(Key::LControl) {
+			println!("{}", input.mouse().location());
+		}
+
+		if input.mouse().left() {
+			self.colliders
+				.push(Box::new(PointCollider::new(input.mouse().location())));
+
+			for x in -5..5 {
+				for y in -5..5 {
+					self.colliders.push(Box::new(PointCollider::new(
+						input.mouse().location() + (x, y).into(),
+					)));
+				}
+			}
+		}
+
 		self.player.update(input, &self.colliders, size);
 
 		if input.key_down(Key::Space) {
