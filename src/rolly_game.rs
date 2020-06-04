@@ -1,5 +1,5 @@
 use crate::{
-	collider::{Collide, RectangleCollider},
+	collider::{Collide, PointCollider, RectangleCollider},
 	config::Config,
 	player::Player,
 };
@@ -20,12 +20,9 @@ pub struct RollyGame {
 impl RollyGame {
 	// TODO: window size as RollyGame field
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
-		let ground = RectangleCollider::new((0.0, size.y - 20.0), (size.x, 32.0));
-		let platform = RectangleCollider::new((525, 400), (128, 10));
-
 		Ok(RollyGame {
 			player: Player::new(),
-			colliders: vec![Box::new(ground), Box::new(platform)],
+			colliders: RollyGame::create_colliders(size),
 			// TODO: clean up
 			background: if config.load_art {
 				Some(Image::load(gfx, "background.png").await?)
@@ -38,6 +35,28 @@ impl RollyGame {
 				None
 			},
 		})
+	}
+
+	fn create_colliders(size: Vector) -> Vec<Box<dyn Collide>> {
+		let mut colliders: Vec<Box<dyn Collide>> = Vec::new();
+
+		// ground
+		colliders.push(Box::new(RectangleCollider::new(
+			(0.0, size.y - 20.0),
+			(size.x, 32.0),
+		)));
+
+		// platform
+		colliders.push(Box::new(RectangleCollider::new((525, 400), (128, 10))));
+
+		// points
+		for x in 0..300 {
+			for y in 380..383 {
+				colliders.push(Box::new(PointCollider::new((x, y).into())));
+			}
+		}
+
+		colliders
 	}
 
 	pub fn update(&mut self, input: &Input, size: Vector) {
@@ -58,11 +77,6 @@ impl RollyGame {
 
 		for collider in &self.colliders {
 			collider.draw(gfx);
-		}
-
-		// points
-		for x in 0..10 {
-			gfx.draw_point((x, 10).into(), Color::GREEN);
 		}
 
 		self.player.draw(&self.ball, gfx);

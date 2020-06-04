@@ -62,3 +62,41 @@ impl Clone for RectangleCollider {
 		RectangleCollider { bounds: self.bounds }
 	}
 }
+
+pub struct PointCollider {
+	point: Vector,
+}
+
+impl PointCollider {
+	pub fn new(point: Vector) -> Self {
+		Self { point }
+	}
+}
+
+impl Collide for PointCollider {
+	fn x(&self) -> f32 {
+		self.point.x
+	}
+
+	fn y(&self) -> f32 {
+		self.point.y
+	}
+
+	fn top_left(&self) -> Vector {
+		// (self.point.x - 1., self.point.y).into()
+		self.point
+	}
+
+	fn top_right(&self) -> Vector {
+		// (self.point.x + 1., self.point.y).into()
+		self.point
+	}
+
+	fn width(&self) -> f32 {
+		1.
+	}
+
+	fn draw(&self, gfx: &mut Graphics) {
+		gfx.draw_point(self.point, Color::GREEN);
+	}
+}
