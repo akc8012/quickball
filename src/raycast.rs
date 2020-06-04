@@ -27,12 +27,12 @@ pub struct Hit {
 
 pub fn cast(ray: Ray, colliders: &[Box<dyn Collide>]) -> Option<Hit> {
 	for collider in colliders {
-		let distance = ray.direction * ray.max_distance;
-		let exceeding_y = (ray.origin + distance).y >= collider.y();
-		let within_x = ray.origin.x > collider.top_left().x && ray.origin.x < collider.top_right().x;
+		let distance: Vector = ray.direction * ray.max_distance;
+		let exceeding_y: bool = (ray.origin + distance).y >= collider.y();
+		let within_x: bool = ray.origin.x >= collider.top_left().x && ray.origin.x <= collider.top_right().x;
 
 		if exceeding_y && within_x {
-			let point = (ray.origin.x, collider.y()).into();
+			let point: Vector = (ray.origin.x, collider.y()).into();
 			return Some(Hit { point, distance });
 		}
 	}
