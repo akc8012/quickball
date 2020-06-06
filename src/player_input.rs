@@ -13,11 +13,7 @@ impl PlayerInput {
 		}
 	}
 
-	pub fn update(self, player: &mut Player, input: &Input) {
-		self.roll(player, input);
-	}
-
-	fn roll(self, player: &mut Player, input: &Input) {
+	pub fn roll(self, player: &mut Player, input: &Input) {
 		const ROLL_SPEED: f32 = 4.;
 		player.vel.x = 0.;
 

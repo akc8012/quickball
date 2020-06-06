@@ -45,7 +45,7 @@ impl Player {
 		}
 		self.input.set_jump_key_released(input);
 
-		self.input.update(self, input);
+		self.input.roll(self, input);
 		self.update_position();
 	}
 
