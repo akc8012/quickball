@@ -1,6 +1,7 @@
 mod collider;
 mod config;
 mod player;
+mod player_input;
 mod raycast;
 mod rolly_game;
 mod time_stepper;

@@ -1,29 +1,30 @@
 use quicksilver::{
 	geom::{Circle, Rectangle, Vector},
 	graphics::{Color, Image},
-	input::Key,
 	Graphics, Input,
 };
 
 use crate::{
 	collider::Collide,
+	player_input::PlayerInput,
 	raycast::{self, Hit, Ray},
 };
 
 pub struct Player {
-	pos: Vector,
-	vel: Vector,
-	radius: f32,
-	jump_key_released: bool,
+	input: PlayerInput,
+
+	pub pos: Vector,
+	pub vel: Vector,
+	pub radius: f32,
 }
 
 impl Player {
 	pub fn new() -> Self {
 		Player {
+			input: PlayerInput::new(),
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
 			radius: 16.,
-			jump_key_released: true,
 		}
 	}
 
@@ -32,18 +33,19 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
+	// TODO: somehow only pass Input to input component
 	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>], _size: Vector) {
 		self.fall();
 
 		if let Some(hit) = self.grounded(colliders) {
 			let snapped_this_frame = self.snap_to_ground(hit);
-			if !snapped_this_frame && self.can_jump(input) {
+			if !snapped_this_frame && self.input.can_jump(input) {
 				self.jump();
 			}
 		}
-		self.set_jump_key_released(input);
+		self.input.set_jump_key_released(input);
 
-		self.roll(input);
+		self.input.update(self, input);
 		self.update_position();
 	}
 
@@ -87,34 +89,11 @@ impl Player {
 		self.pos.y > last_y
 	}
 
-	fn can_jump(&self, input: &Input) -> bool {
-		(input.key_down(Key::W) || input.key_down(Key::Up)) && self.jump_key_released
-	}
-
 	fn jump(&mut self) {
 		const JUMP_HEIGHT: f32 = 20.;
 
 		self.vel.y -= JUMP_HEIGHT;
-		self.jump_key_released = false;
-	}
-
-	fn set_jump_key_released(&mut self, input: &Input) {
-		// TODO: Base this off of framestamp
-		if !input.key_down(Key::W) {
-			self.jump_key_released = true;
-		}
-	}
-
-	fn roll(&mut self, input: &Input) {
-		const ROLL_SPEED: f32 = 4.;
-		self.vel.x = 0.;
-
-		if input.key_down(Key::A) || input.key_down(Key::Left) {
-			self.vel.x -= ROLL_SPEED;
-		}
-		if input.key_down(Key::D) || input.key_down(Key::Right) {
-			self.vel.x += ROLL_SPEED;
-		}
+		self.input.jump_key_released = false;
 	}
 
 	fn update_position(&mut self) {
