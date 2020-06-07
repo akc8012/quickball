@@ -1,5 +1,5 @@
 use crate::physics::Bounds;
-use quicksilver::{geom::Vector, Graphics};
+use quicksilver::geom::Vector;
 
 pub struct CircleBounds {
 	pub pos: Vector,
@@ -37,6 +37,10 @@ impl Bounds for CircleBounds {
 		self.radius * 2.
 	}
 
+	fn height(&self) -> f32 {
+		self.width()
+	}
+
 	fn radius(&self) -> f32 {
 		self.radius
 	}
@@ -56,7 +60,7 @@ impl Bounds for CircleBounds {
 		self.pos.y
 	}
 
-	fn draw(&self, _gfx: &mut Graphics) {
-		todo!()
+	fn should_draw(&self) -> bool {
+		false
 	}
 }

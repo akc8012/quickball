@@ -1,7 +1,7 @@
 pub mod colliders;
 pub mod raycast;
 
-use quicksilver::{geom::Vector, Graphics};
+use quicksilver::geom::Vector;
 
 pub trait Bounds {
 	fn x(&self) -> f32;
@@ -12,12 +12,12 @@ pub trait Bounds {
 	fn top_right(&self) -> Vector;
 
 	fn width(&self) -> f32;
+	fn height(&self) -> f32;
 	fn radius(&self) -> f32;
 
 	fn set_pos(&mut self, pos: Vector) -> Vector;
 	fn set_x(&mut self, x: f32) -> f32;
 	fn set_y(&mut self, y: f32) -> f32;
 
-	// TODO: Should not be on Bounds trait, instead: draw within Colliders?
-	fn draw(&self, gfx: &mut Graphics);
+	fn should_draw(&self) -> bool;
 }

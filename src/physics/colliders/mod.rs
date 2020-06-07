@@ -7,7 +7,11 @@ use point_bounds::PointBounds;
 pub mod circle_bounds;
 
 use super::Bounds;
-use quicksilver::{geom::Vector, Graphics, Input};
+use quicksilver::{
+	geom::{Rectangle, Vector},
+	graphics::Color,
+	Graphics, Input,
+};
 
 pub struct Colliders {
 	colliders: Vec<Box<dyn Bounds>>,
@@ -63,7 +67,12 @@ impl Colliders {
 
 	pub fn draw(&self, gfx: &mut Graphics) {
 		for collider in &self.colliders {
-			collider.draw(gfx);
+			if collider.should_draw() {
+				gfx.fill_rect(
+					&Rectangle::new(collider.pos(), (collider.width(), collider.height())),
+					Color::GREEN,
+				);
+			}
 		}
 	}
 }

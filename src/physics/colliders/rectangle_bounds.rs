@@ -1,10 +1,5 @@
 use crate::physics::Bounds;
-
-use quicksilver::{
-	geom::{Rectangle, Vector},
-	graphics::Color,
-	Graphics,
-};
+use quicksilver::geom::{Rectangle, Vector};
 
 pub struct RectangleBounds {
 	bounds: Rectangle,
@@ -45,6 +40,10 @@ impl Bounds for RectangleBounds {
 		self.bounds.width()
 	}
 
+	fn height(&self) -> f32 {
+		self.bounds.height()
+	}
+
 	fn radius(&self) -> f32 {
 		self.bounds.width() / 2.
 	}
@@ -64,7 +63,7 @@ impl Bounds for RectangleBounds {
 		self.bounds.pos.y
 	}
 
-	fn draw(&self, gfx: &mut Graphics) {
-		gfx.fill_rect(&self.bounds, Color::GREEN);
+	fn should_draw(&self) -> bool {
+		true
 	}
 }

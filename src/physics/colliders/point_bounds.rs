@@ -1,5 +1,5 @@
 use crate::physics::Bounds;
-use quicksilver::{geom::Vector, graphics::Color, Graphics};
+use quicksilver::geom::Vector;
 
 pub struct PointBounds {
 	point: Vector,
@@ -38,6 +38,10 @@ impl Bounds for PointBounds {
 		1.
 	}
 
+	fn height(&self) -> f32 {
+		1.
+	}
+
 	fn radius(&self) -> f32 {
 		panic!("Attempt to get the radius of a PointBounds")
 	}
@@ -57,7 +61,7 @@ impl Bounds for PointBounds {
 		self.point.y
 	}
 
-	fn draw(&self, gfx: &mut Graphics) {
-		gfx.draw_point(self.point, Color::GREEN);
+	fn should_draw(&self) -> bool {
+		true
 	}
 }
