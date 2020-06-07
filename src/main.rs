@@ -1,3 +1,4 @@
+mod components;
 mod config;
 mod game;
 mod physics;
