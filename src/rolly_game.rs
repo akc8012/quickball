@@ -20,20 +20,20 @@ pub struct RollyGame {
 impl RollyGame {
 	// TODO: window size as RollyGame field
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
+		let (background, ball) = if config.load_art {
+			let background = Image::load(gfx, "background.png").await?;
+			let ball = Image::load(gfx, "ball.png").await?;
+
+			(Some(background), Some(ball))
+		} else {
+			(None, None)
+		};
+
 		Ok(RollyGame {
 			player: Player::new(),
 			colliders: RollyGame::create_colliders(size),
-			// TODO: clean up
-			background: if config.load_art {
-				Some(Image::load(gfx, "background.png").await?)
-			} else {
-				None
-			},
-			ball: if config.load_art {
-				Some(Image::load(gfx, "ball.png").await?)
-			} else {
-				None
-			},
+			background,
+			ball,
 		})
 	}
 
