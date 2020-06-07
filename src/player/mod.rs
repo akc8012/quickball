@@ -1,3 +1,6 @@
+use crate::physics::*;
+use raycast::*;
+
 mod input_component;
 use input_component::InputComponent;
 
@@ -5,11 +8,6 @@ use quicksilver::{
 	geom::{Circle, Rectangle, Vector},
 	graphics::{Color, Image},
 	Graphics, Input,
-};
-
-use crate::{
-	collider::Collide,
-	raycast::{self, Hit, Ray},
 };
 
 pub struct Player {

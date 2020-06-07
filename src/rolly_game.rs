@@ -1,8 +1,5 @@
-use crate::{
-	collider::{Collide, PointCollider, RectangleCollider},
-	config::Config,
-	player::Player,
-};
+use crate::{config::Config, physics::*, player::Player};
+
 use quicksilver::{
 	geom::{Rectangle, Vector},
 	graphics::{Color, Image},

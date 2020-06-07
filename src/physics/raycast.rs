@@ -1,4 +1,4 @@
-use crate::collider::Collide;
+use crate::physics::Collide;
 use quicksilver::geom::Vector;
 
 pub struct Ray {
