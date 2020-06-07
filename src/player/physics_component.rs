@@ -45,7 +45,7 @@ impl PhysicsComponent {
 		pos.y > last_y
 	}
 
-	pub fn update_position(&self, pos: Vector, vel: Vector) -> Vector {
-		pos + vel
+	pub fn update_position(&self, pos: &mut Vector, vel: &Vector) {
+		*pos += *vel;
 	}
 }

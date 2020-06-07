@@ -50,7 +50,7 @@ impl Player {
 		self.input.set_jump_key_released(input);
 
 		self.input.roll(&mut self.vel, input);
-		self.pos = self.physics.update_position(self.pos, self.vel);
+		self.physics.update_position(&mut self.pos, &self.vel);
 	}
 
 	pub fn reset(&mut self) {
