@@ -8,11 +8,9 @@ use quicksilver::{
 
 pub trait Bounds {
 	fn x(&self) -> f32;
-
 	fn y(&self) -> f32;
 
 	fn top_left(&self) -> Vector;
-
 	fn top_right(&self) -> Vector;
 
 	fn width(&self) -> f32;
@@ -102,5 +100,42 @@ impl Bounds for PointBounds {
 
 	fn draw(&self, gfx: &mut Graphics) {
 		gfx.draw_point(self.point, Color::GREEN);
+	}
+}
+
+pub struct CircleBounds {
+	pub pos: Vector,
+	pub radius: f32,
+}
+
+impl CircleBounds {
+	pub fn new(pos: Vector, radius: f32) -> Self {
+		Self { pos, radius }
+	}
+}
+
+impl Bounds for CircleBounds {
+	fn x(&self) -> f32 {
+		self.pos.x
+	}
+
+	fn y(&self) -> f32 {
+		self.pos.y
+	}
+
+	fn top_left(&self) -> Vector {
+		todo!()
+	}
+
+	fn top_right(&self) -> Vector {
+		todo!()
+	}
+
+	fn width(&self) -> f32 {
+		self.radius * 2.
+	}
+
+	fn draw(&self, _gfx: &mut Graphics) {
+		todo!()
 	}
 }

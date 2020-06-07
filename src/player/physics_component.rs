@@ -1,4 +1,4 @@
-use crate::physics::{raycast::*, Bounds};
+use crate::physics::{raycast::*, Bounds, CircleBounds};
 use quicksilver::geom::Vector;
 
 pub struct PhysicsComponent;
@@ -15,16 +15,25 @@ impl PhysicsComponent {
 
 	pub fn grounded(
 		&self,
-		(pos, vel, radius): (&mut Vector, &mut Vector, f32),
+		bounds: &CircleBounds,
+		vel: &Vector,
 		colliders: &[Box<dyn Bounds>],
 	) -> Option<Hit> {
 		let direction = (0., 1.).into();
-		let distance = radius + vel.y;
+		let distance = bounds.radius + vel.y;
 
 		let rays = vec![
-			Ray::new(*pos, direction, Some(distance)),
-			Ray::new(*pos - (radius * 0.85, 0).into(), direction, Some(distance - 3.)),
-			Ray::new(*pos + (radius * 0.85, 0).into(), direction, Some(distance - 3.)),
+			Ray::new(bounds.pos, direction, Some(distance)),
+			Ray::new(
+				bounds.pos - (bounds.radius * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+			Ray::new(
+				bounds.pos + (bounds.radius * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
 		];
 
 		for ray in rays {
