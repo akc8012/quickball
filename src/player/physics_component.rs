@@ -45,15 +45,15 @@ impl PhysicsComponent {
 		None
 	}
 
-	pub fn snap_to_ground(&self, pos: &mut Vector, vel: &mut Vector, hit: Hit) -> bool {
-		let last_y = pos.y;
-		pos.y = hit.point.y - hit.distance.y + vel.y;
+	pub fn snap_to_ground(&self, bounds: &mut CircleBounds, vel: &mut Vector, hit: Hit) -> bool {
+		let last_y = bounds.y();
+		bounds.pos.y = hit.point.y - hit.distance.y + vel.y;
 
 		vel.y = 0.;
-		pos.y > last_y
+		bounds.pos.y > last_y
 	}
 
-	pub fn update_position(&self, pos: &mut Vector, vel: &Vector) {
-		*pos += *vel;
+	pub fn update_position(&self, bounds: &mut CircleBounds, vel: &Vector) {
+		bounds.pos += *vel;
 	}
 }
