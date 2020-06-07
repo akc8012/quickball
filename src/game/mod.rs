@@ -1,3 +1,5 @@
+pub mod time_stepper;
+
 use crate::{
 	config::Config,
 	physics::colliders::{circle_bounds::CircleBounds, Colliders},
@@ -11,15 +13,15 @@ use quicksilver::{
 	Graphics, Input, Result,
 };
 
-pub struct RollyGame {
+pub struct Game {
 	player: Player,
 	colliders: Colliders,
 	background: Option<Image>,
 	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
 
-impl RollyGame {
-	// TODO: window size as RollyGame field
+impl Game {
+	// TODO: window size as Game field
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
 		let (background, ball) = if config.load_art {
 			let background = Image::load(gfx, "background.png").await?;
@@ -30,7 +32,7 @@ impl RollyGame {
 			(None, None)
 		};
 
-		Ok(RollyGame {
+		Ok(Game {
 			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.))),
 			colliders: Colliders::new(size),
 			background,
