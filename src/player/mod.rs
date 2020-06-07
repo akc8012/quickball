@@ -4,6 +4,9 @@ use raycast::*;
 mod input_component;
 use input_component::InputComponent;
 
+mod physics_component;
+use physics_component::PhysicsComponent;
+
 use quicksilver::{
 	geom::{Circle, Rectangle, Vector},
 	graphics::{Color, Image},
@@ -12,6 +15,7 @@ use quicksilver::{
 
 pub struct Player {
 	input: InputComponent,
+	physics: PhysicsComponent,
 
 	pub pos: Vector,
 	pub vel: Vector,
@@ -22,6 +26,7 @@ impl Player {
 	pub fn new() -> Self {
 		Player {
 			input: InputComponent::new(),
+			physics: PhysicsComponent::new(),
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
 			radius: 16.,
@@ -35,9 +40,12 @@ impl Player {
 
 	// TODO: somehow only pass Input to input component
 	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>]) {
-		self.fall();
+		self.physics.fall(&mut self.vel);
 
-		if let Some(hit) = self.grounded(colliders) {
+		if let Some(hit) = self
+			.physics
+			.grounded((&mut self.pos, &mut self.vel, self.radius), colliders)
+		{
 			if !self.snap_to_ground(hit) {
 				self.input.jump_if_pressed(&mut self.vel, input);
 			}
@@ -46,38 +54,6 @@ impl Player {
 
 		self.input.roll(&mut self.vel, input);
 		self.update_position();
-	}
-
-	fn fall(&mut self) {
-		const GRAVITY: f32 = 2.;
-		self.vel.y += GRAVITY;
-	}
-
-	fn grounded(&self, colliders: &[Box<dyn Collide>]) -> Option<Hit> {
-		let direction = (0., 1.).into();
-		let distance = self.radius + self.vel.y;
-
-		let rays = vec![
-			Ray::new(self.pos, direction, Some(distance)),
-			Ray::new(
-				self.pos - (self.radius * 0.85, 0).into(),
-				direction,
-				Some(distance - 3.),
-			),
-			Ray::new(
-				self.pos + (self.radius * 0.85, 0).into(),
-				direction,
-				Some(distance - 3.),
-			),
-		];
-
-		for ray in rays {
-			if let Some(hit) = raycast::cast(ray, colliders) {
-				return Some(hit);
-			}
-		}
-
-		None
 	}
 
 	fn snap_to_ground(&mut self, hit: Hit) -> bool {

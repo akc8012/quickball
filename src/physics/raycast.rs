@@ -7,6 +7,11 @@ pub struct Ray {
 	pub max_distance: f32,
 }
 
+pub struct Hit {
+	pub point: Vector,
+	pub distance: Vector,
+}
+
 impl Ray {
 	pub fn new(origin: Vector, direction: Vector, max_distance: Option<f32>) -> Self {
 		Self {
@@ -18,25 +23,20 @@ impl Ray {
 			},
 		}
 	}
-}
 
-pub struct Hit {
-	pub point: Vector,
-	pub distance: Vector,
-}
+	pub fn cast(&self, colliders: &[Box<dyn Collide>]) -> Option<Hit> {
+		for collider in colliders {
+			let distance: Vector = self.direction * self.max_distance;
+			let exceeding_y: bool = (self.origin + distance).y >= collider.y();
 
-pub fn cast(ray: Ray, colliders: &[Box<dyn Collide>]) -> Option<Hit> {
-	for collider in colliders {
-		let distance: Vector = ray.direction * ray.max_distance;
-		let exceeding_y: bool = (ray.origin + distance).y >= collider.y();
+			let ray_x: f32 = self.origin.x.round();
+			let within_x: bool = ray_x >= collider.top_left().x && ray_x <= collider.top_right().x;
 
-		let ray_x: f32 = ray.origin.x.round();
-		let within_x: bool = ray_x >= collider.top_left().x && ray_x <= collider.top_right().x;
-
-		if exceeding_y && within_x {
-			let point: Vector = (ray.origin.x, collider.y()).into();
-			return Some(Hit { point, distance });
+			if exceeding_y && within_x {
+				let point: Vector = (self.origin.x, collider.y()).into();
+				return Some(Hit { point, distance });
+			}
 		}
+		None
 	}
-	None
 }
