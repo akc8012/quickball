@@ -1,4 +1,4 @@
-use crate::physics::{raycast::*, Bounds, CircleBounds};
+use crate::physics::{raycast::*, Bounds};
 use quicksilver::geom::Vector;
 
 pub struct PhysicsComponent;
@@ -13,24 +13,19 @@ impl PhysicsComponent {
 		vel.y += GRAVITY;
 	}
 
-	pub fn grounded(
-		&self,
-		bounds: &CircleBounds,
-		vel: &Vector,
-		colliders: &[Box<dyn Bounds>],
-	) -> Option<Hit> {
+	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &[Box<dyn Bounds>]) -> Option<Hit> {
 		let direction = (0., 1.).into();
-		let distance = bounds.radius + vel.y;
+		let distance = bounds.radius() + vel.y;
 
 		let rays = vec![
-			Ray::new(bounds.pos, direction, Some(distance)),
+			Ray::new(bounds.pos(), direction, Some(distance)),
 			Ray::new(
-				bounds.pos - (bounds.radius * 0.85, 0).into(),
+				bounds.pos() - (bounds.radius() * 0.85, 0).into(),
 				direction,
 				Some(distance - 3.),
 			),
 			Ray::new(
-				bounds.pos + (bounds.radius * 0.85, 0).into(),
+				bounds.pos() + (bounds.radius() * 0.85, 0).into(),
 				direction,
 				Some(distance - 3.),
 			),
@@ -45,15 +40,15 @@ impl PhysicsComponent {
 		None
 	}
 
-	pub fn snap_to_ground(&self, bounds: &mut CircleBounds, vel: &mut Vector, hit: Hit) -> bool {
+	pub fn snap_to_ground(&self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
 		let last_y = bounds.y();
-		bounds.pos.y = hit.point.y - hit.distance.y + vel.y;
+		bounds.set_y(hit.point.y - hit.distance.y + vel.y);
 
 		vel.y = 0.;
-		bounds.pos.y > last_y
+		bounds.y() > last_y
 	}
 
-	pub fn update_position(&self, bounds: &mut CircleBounds, vel: &Vector) {
-		bounds.pos += *vel;
+	pub fn update_position(&self, bounds: &mut dyn Bounds, vel: &Vector) {
+		bounds.set_pos(bounds.pos() + *vel);
 	}
 }

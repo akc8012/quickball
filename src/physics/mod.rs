@@ -9,13 +9,17 @@ use quicksilver::{
 pub trait Bounds {
 	fn x(&self) -> f32;
 	fn y(&self) -> f32;
-	// TODO: pos()
+	fn pos(&self) -> Vector;
 
 	fn top_left(&self) -> Vector;
 	fn top_right(&self) -> Vector;
 
 	fn width(&self) -> f32;
-	// TODO: radius()
+	fn radius(&self) -> f32;
+
+	fn set_pos(&mut self, pos: Vector) -> Vector;
+	fn set_x(&mut self, x: f32) -> f32;
+	fn set_y(&mut self, y: f32) -> f32;
 
 	// TODO: THIS SHOULD BE ON A DIFFERENT TRAIT
 	fn draw(&self, gfx: &mut Graphics);
@@ -44,6 +48,10 @@ impl Bounds for RectangleBounds {
 		self.bounds.y()
 	}
 
+	fn pos(&self) -> Vector {
+		self.bounds.pos
+	}
+
 	fn top_left(&self) -> Vector {
 		self.bounds.top_left()
 	}
@@ -54,6 +62,25 @@ impl Bounds for RectangleBounds {
 
 	fn width(&self) -> f32 {
 		self.bounds.width()
+	}
+
+	fn radius(&self) -> f32 {
+		self.bounds.width() / 2.
+	}
+
+	fn set_pos(&mut self, pos: Vector) -> Vector {
+		self.bounds.pos = pos;
+		self.bounds.pos
+	}
+
+	fn set_x(&mut self, x: f32) -> f32 {
+		self.bounds.pos.x = x;
+		self.bounds.pos.x
+	}
+
+	fn set_y(&mut self, y: f32) -> f32 {
+		self.bounds.pos.y = y;
+		self.bounds.pos.y
 	}
 
 	fn draw(&self, gfx: &mut Graphics) {
@@ -88,6 +115,10 @@ impl Bounds for PointBounds {
 		self.point.y
 	}
 
+	fn pos(&self) -> Vector {
+		self.point
+	}
+
 	fn top_left(&self) -> Vector {
 		self.point
 	}
@@ -98,6 +129,25 @@ impl Bounds for PointBounds {
 
 	fn width(&self) -> f32 {
 		1.
+	}
+
+	fn radius(&self) -> f32 {
+		panic!("Attempt to get the radius of a PointBounds")
+	}
+
+	fn set_pos(&mut self, pos: Vector) -> Vector {
+		self.point = pos;
+		self.point
+	}
+
+	fn set_x(&mut self, x: f32) -> f32 {
+		self.point.x = x;
+		self.point.x
+	}
+
+	fn set_y(&mut self, y: f32) -> f32 {
+		self.point.y = y;
+		self.point.y
 	}
 
 	fn draw(&self, gfx: &mut Graphics) {
@@ -125,6 +175,10 @@ impl Bounds for CircleBounds {
 		self.pos.y
 	}
 
+	fn pos(&self) -> Vector {
+		self.pos
+	}
+
 	fn top_left(&self) -> Vector {
 		todo!()
 	}
@@ -135,6 +189,25 @@ impl Bounds for CircleBounds {
 
 	fn width(&self) -> f32 {
 		self.radius * 2.
+	}
+
+	fn radius(&self) -> f32 {
+		self.radius
+	}
+
+	fn set_pos(&mut self, pos: Vector) -> Vector {
+		self.pos = pos;
+		self.pos
+	}
+
+	fn set_x(&mut self, x: f32) -> f32 {
+		self.pos.x = x;
+		self.pos.x
+	}
+
+	fn set_y(&mut self, y: f32) -> f32 {
+		self.pos.y = y;
+		self.pos.y
 	}
 
 	fn draw(&self, _gfx: &mut Graphics) {
