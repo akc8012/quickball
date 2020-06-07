@@ -3,34 +3,33 @@ use crate::{
 	physics::{colliders::Colliders, Bounds},
 };
 
+pub mod draw_image_component;
+
 mod input_component;
 use input_component::InputComponent;
 
 mod physics_component;
 use physics_component::PhysicsComponent;
 
-mod draw_image_component;
-use draw_image_component::DrawImageComponent;
-
-use quicksilver::{geom::Vector, graphics::Image, Graphics, Input};
+use quicksilver::{geom::Vector, Graphics, Input};
 
 pub struct Player {
 	input: InputComponent,
 	physics: PhysicsComponent,
-	draw: DrawImageComponent,
 
 	bounds: Box<dyn Bounds>,
+	draw: Box<dyn DrawComponent>,
+
 	vel: Vector,
 }
 
 impl Player {
-	pub fn new(bounds: Box<dyn Bounds>, image: Option<Image>) -> Self {
+	pub fn new(bounds: Box<dyn Bounds>, draw: Box<dyn DrawComponent>) -> Self {
 		Player {
 			input: InputComponent::new(),
 			physics: PhysicsComponent::new(),
-			draw: DrawImageComponent::new(image),
-
 			bounds,
+			draw,
 			vel: Vector::ZERO,
 		}
 	}

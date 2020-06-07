@@ -3,7 +3,7 @@ pub mod time_stepper;
 use crate::{
 	config::Config,
 	physics::colliders::{circle_bounds::CircleBounds, Colliders},
-	player::Player,
+	player::{draw_image_component::DrawImageComponent, Player},
 };
 
 use quicksilver::{
@@ -33,7 +33,10 @@ impl Game {
 		};
 
 		Ok(Game {
-			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), ball),
+			player: Player::new(
+				Box::new(CircleBounds::new((300, 20).into(), 16.)),
+				Box::new(DrawImageComponent::new(ball)),
+			),
 			colliders: Colliders::new(size),
 			background,
 		})
