@@ -1,6 +1,5 @@
 use quicksilver::{geom::Vector, input::Key, Input};
 
-#[derive(Copy, Clone)]
 pub struct InputComponent {
 	jump_key_released: bool,
 }
@@ -14,7 +13,7 @@ impl InputComponent {
 		}
 	}
 
-	pub fn roll(self, vel: &mut Vector, input: &Input) {
+	pub fn roll(&self, vel: &mut Vector, input: &Input) {
 		const ROLL_SPEED: f32 = 4.;
 		vel.x = 0.;
 
