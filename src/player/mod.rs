@@ -1,5 +1,4 @@
 use crate::physics::*;
-use raycast::*;
 
 mod input_component;
 use input_component::InputComponent;
@@ -33,12 +32,8 @@ impl Player {
 		}
 	}
 
-	pub fn reset(&mut self) {
-		self.pos = (300, 20).into();
-		self.vel = Vector::ZERO;
-	}
-
 	// TODO: somehow only pass Input to input component
+	// TODO: pass in colliders via a World object
 	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>]) {
 		self.physics.fall(&mut self.vel);
 
@@ -46,26 +41,19 @@ impl Player {
 			.physics
 			.grounded((&mut self.pos, &mut self.vel, self.radius), colliders)
 		{
-			if !self.snap_to_ground(hit) {
+			if !self.physics.snap_to_ground(&mut self.pos, &mut self.vel, hit) {
 				self.input.jump_if_pressed(&mut self.vel, input);
 			}
 		}
 		self.input.set_jump_key_released(input);
 
 		self.input.roll(&mut self.vel, input);
-		self.update_position();
+		self.pos = self.physics.update_position(self.pos, self.vel);
 	}
 
-	fn snap_to_ground(&mut self, hit: Hit) -> bool {
-		let last_y = self.pos.y;
-		self.pos.y = hit.point.y - hit.distance.y + self.vel.y;
-
-		self.vel.y = 0.;
-		self.pos.y > last_y
-	}
-
-	fn update_position(&mut self) {
-		self.pos += self.vel;
+	pub fn reset(&mut self) {
+		self.pos = (300, 20).into();
+		self.vel = Vector::ZERO;
 	}
 
 	pub fn draw(&self, image: &Option<Image>, gfx: &mut Graphics) {
