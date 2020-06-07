@@ -16,8 +16,8 @@ pub struct Player {
 	physics: PhysicsComponent,
 	draw: DrawComponent,
 
-	pub bounds: CircleBounds,
-	pub vel: Vector,
+	bounds: CircleBounds,
+	vel: Vector,
 }
 
 impl Player {
