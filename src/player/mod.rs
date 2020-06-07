@@ -1,4 +1,4 @@
-use crate::physics::*;
+use crate::physics::Bounds;
 
 mod input_component;
 use input_component::InputComponent;
@@ -21,13 +21,13 @@ pub struct Player {
 }
 
 impl Player {
-	pub fn new() -> Self {
+	pub fn new(bounds: Box<dyn Bounds>) -> Self {
 		Player {
 			input: InputComponent::new(),
 			physics: PhysicsComponent::new(),
 			draw: DrawComponent::new(),
 
-			bounds: Box::new(CircleBounds::new((300, 20).into(), 16.)),
+			bounds,
 			vel: Vector::ZERO,
 		}
 	}

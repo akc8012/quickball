@@ -27,7 +27,7 @@ impl RollyGame {
 		};
 
 		Ok(RollyGame {
-			player: Player::new(),
+			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.))),
 			colliders: RollyGame::create_colliders(size),
 			background,
 			ball,
