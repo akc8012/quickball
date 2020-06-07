@@ -1,3 +1,5 @@
+pub mod raycast;
+
 use quicksilver::{
 	geom::{Rectangle, Vector},
 	graphics::Color,

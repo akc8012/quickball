@@ -1,7 +1,6 @@
-mod collider;
 mod config;
+mod physics;
 mod player;
-mod raycast;
 mod rolly_game;
 mod time_stepper;
 use rolly_game::RollyGame;
