@@ -3,7 +3,7 @@ use quicksilver::{input::Key, Input};
 
 #[derive(Copy, Clone)]
 pub struct PlayerInput {
-	pub jump_key_released: bool,
+	jump_key_released: bool,
 }
 
 impl PlayerInput {
@@ -25,8 +25,22 @@ impl PlayerInput {
 		}
 	}
 
-	pub fn can_jump(&self, input: &Input) -> bool {
+	pub fn jump_if_pressed(mut self, player: &mut Player, input: &Input) -> Self {
+		if self.can_jump(input) {
+			self.jump(player);
+		}
+		self
+	}
+
+	fn can_jump(&self, input: &Input) -> bool {
 		self.jump_key_released && (input.key_down(Key::W) || input.key_down(Key::Up))
+	}
+
+	fn jump(&mut self, player: &mut Player) {
+		const JUMP_HEIGHT: f32 = 20.;
+
+		player.vel.y -= JUMP_HEIGHT;
+		self.jump_key_released = false;
 	}
 
 	pub fn set_jump_key_released(&mut self, input: &Input) {

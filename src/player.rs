@@ -38,9 +38,8 @@ impl Player {
 		self.fall();
 
 		if let Some(hit) = self.grounded(colliders) {
-			let snapped_this_frame = self.snap_to_ground(hit);
-			if !snapped_this_frame && self.input.can_jump(input) {
-				self.jump();
+			if !self.snap_to_ground(hit) {
+				self.input = self.input.jump_if_pressed(self, input);
 			}
 		}
 		self.input.set_jump_key_released(input);
@@ -87,13 +86,6 @@ impl Player {
 
 		self.vel.y = 0.;
 		self.pos.y > last_y
-	}
-
-	fn jump(&mut self) {
-		const JUMP_HEIGHT: f32 = 20.;
-
-		self.vel.y -= JUMP_HEIGHT;
-		self.input.jump_key_released = false;
 	}
 
 	fn update_position(&mut self) {
