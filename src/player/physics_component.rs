@@ -14,10 +14,21 @@ impl PhysicsComponent {
 	}
 
 	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &[Box<dyn Bounds>]) -> Option<Hit> {
+		let rays = self.build_rays(bounds, vel);
+
+		for ray in rays {
+			if let Some(hit) = ray.cast(colliders) {
+				return Some(hit);
+			}
+		}
+		None
+	}
+
+	fn build_rays(&self, bounds: &dyn Bounds, vel: &Vector) -> Vec<Ray> {
 		let direction = (0., 1.).into();
 		let distance = bounds.radius() + vel.y;
 
-		let rays = vec![
+		vec![
 			Ray::new(bounds.pos(), direction, Some(distance)),
 			Ray::new(
 				bounds.pos() - (bounds.radius() * 0.85, 0).into(),
@@ -29,15 +40,7 @@ impl PhysicsComponent {
 				direction,
 				Some(distance - 3.),
 			),
-		];
-
-		for ray in rays {
-			if let Some(hit) = ray.cast(colliders) {
-				return Some(hit);
-			}
-		}
-
-		None
+		]
 	}
 
 	pub fn snap_to_ground(&self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
