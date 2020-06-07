@@ -1,15 +1,15 @@
 use quicksilver::{geom::Vector, input::Key, Input};
 
 #[derive(Copy, Clone)]
-pub struct PlayerInput {
+pub struct InputComponent {
 	jump_key_released: bool,
 }
 
 const JUMP_HEIGHT: f32 = 20.;
 
-impl PlayerInput {
+impl InputComponent {
 	pub fn new() -> Self {
-		PlayerInput {
+		InputComponent {
 			jump_key_released: true,
 		}
 	}

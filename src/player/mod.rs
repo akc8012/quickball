@@ -1,3 +1,6 @@
+mod input_component;
+use input_component::InputComponent;
+
 use quicksilver::{
 	geom::{Circle, Rectangle, Vector},
 	graphics::{Color, Image},
@@ -6,12 +9,11 @@ use quicksilver::{
 
 use crate::{
 	collider::Collide,
-	player_input::PlayerInput,
 	raycast::{self, Hit, Ray},
 };
 
 pub struct Player {
-	input: PlayerInput,
+	input: InputComponent,
 
 	pub pos: Vector,
 	pub vel: Vector,
@@ -21,7 +23,7 @@ pub struct Player {
 impl Player {
 	pub fn new() -> Self {
 		Player {
-			input: PlayerInput::new(),
+			input: InputComponent::new(),
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
 			radius: 16.,
