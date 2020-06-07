@@ -1,4 +1,4 @@
-use crate::physics::{raycast::*, Bounds};
+use crate::physics::{colliders::Colliders, raycast::*, Bounds};
 use quicksilver::geom::Vector;
 
 pub struct PhysicsComponent;
@@ -13,7 +13,7 @@ impl PhysicsComponent {
 		vel.y += GRAVITY;
 	}
 
-	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &[Box<dyn Bounds>]) -> Option<Hit> {
+	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &Colliders) -> Option<Hit> {
 		let rays = self.build_rays(bounds, vel);
 
 		for ray in rays {

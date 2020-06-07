@@ -1,3 +1,4 @@
+pub mod colliders;
 pub mod raycast;
 
 use quicksilver::{

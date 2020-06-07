@@ -1,4 +1,4 @@
-use crate::physics::Bounds;
+use crate::physics::{colliders::Colliders, Bounds};
 
 mod input_component;
 use input_component::InputComponent;
@@ -34,7 +34,7 @@ impl Player {
 
 	// TODO: somehow only pass Input to input component
 	// TODO: pass in colliders via a World object
-	pub fn update(&mut self, input_: &Input, colliders: &[Box<dyn Bounds>]) {
+	pub fn update(&mut self, input_: &Input, colliders: &Colliders) {
 		let (physics, input) = (&self.physics, &mut self.input);
 
 		physics.fall(&mut self.vel);

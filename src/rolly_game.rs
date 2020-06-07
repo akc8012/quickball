@@ -1,4 +1,8 @@
-use crate::{config::Config, physics::*, player::Player};
+use crate::{
+	config::Config,
+	physics::{colliders::Colliders, *},
+	player::Player,
+};
 
 use quicksilver::{
 	geom::{Rectangle, Vector},
@@ -9,7 +13,7 @@ use quicksilver::{
 
 pub struct RollyGame {
 	player: Player,
-	colliders: Vec<Box<dyn Bounds>>,
+	colliders: Colliders,
 	background: Option<Image>,
 	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
@@ -28,32 +32,10 @@ impl RollyGame {
 
 		Ok(RollyGame {
 			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.))),
-			colliders: RollyGame::create_colliders(size),
+			colliders: Colliders::new(size),
 			background,
 			ball,
 		})
-	}
-
-	fn create_colliders(size: Vector) -> Vec<Box<dyn Bounds>> {
-		let mut colliders: Vec<Box<dyn Bounds>> = Vec::new();
-
-		// ground
-		colliders.push(Box::new(RectangleBounds::new(
-			(0.0, size.y - 20.0),
-			(size.x, 32.0),
-		)));
-
-		// platform
-		colliders.push(Box::new(RectangleBounds::new((525, 400), (128, 10))));
-
-		// points
-		for x in 0..300 {
-			for y in 380..383 {
-				colliders.push(Box::new(PointBounds::new((x, y).into())));
-			}
-		}
-
-		colliders
 	}
 
 	pub fn update(&mut self, input: &Input) {
@@ -62,18 +44,7 @@ impl RollyGame {
 			println!("{}", input.mouse().location());
 		}
 
-		if input.mouse().left() {
-			self.colliders
-				.push(Box::new(PointBounds::new(input.mouse().location())));
-
-			for x in -5..5 {
-				for y in -5..5 {
-					self.colliders.push(Box::new(PointBounds::new(
-						input.mouse().location() + (x, y).into(),
-					)));
-				}
-			}
-		}
+		self.colliders.update(input);
 
 		self.player.update(input, &self.colliders);
 
@@ -90,10 +61,7 @@ impl RollyGame {
 			gfx.clear(Color::from_hex("ade7ff"));
 		}
 
-		for collider in &self.colliders {
-			collider.draw(gfx);
-		}
-
+		self.colliders.draw(gfx);
 		self.player.draw(&self.ball, gfx);
 	}
 }
