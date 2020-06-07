@@ -1,4 +1,4 @@
-use crate::physics::Collide;
+use super::colliders::Colliders;
 use quicksilver::geom::Vector;
 
 pub struct Ray {
@@ -24,8 +24,8 @@ impl Ray {
 		}
 	}
 
-	pub fn cast(&self, colliders: &[Box<dyn Collide>]) -> Option<Hit> {
-		for collider in colliders {
+	pub fn cast(&self, colliders: &Colliders) -> Option<Hit> {
+		for collider in colliders.get() {
 			let distance: Vector = self.direction * self.max_distance;
 			let exceeding_y: bool = (self.origin + distance).y >= collider.y();
 

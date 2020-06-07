@@ -1,5 +1,4 @@
-use crate::physics::{raycast::*, Collide};
-
+use crate::physics::{colliders::Colliders, raycast::*, Bounds};
 use quicksilver::geom::Vector;
 
 pub struct PhysicsComponent;
@@ -14,38 +13,45 @@ impl PhysicsComponent {
 		vel.y += GRAVITY;
 	}
 
-	pub fn grounded(
-		&self,
-		(pos, vel, radius): (&mut Vector, &mut Vector, f32),
-		colliders: &[Box<dyn Collide>],
-	) -> Option<Hit> {
-		let direction = (0., 1.).into();
-		let distance = radius + vel.y;
-
-		let rays = vec![
-			Ray::new(*pos, direction, Some(distance)),
-			Ray::new(*pos - (radius * 0.85, 0).into(), direction, Some(distance - 3.)),
-			Ray::new(*pos + (radius * 0.85, 0).into(), direction, Some(distance - 3.)),
-		];
+	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &Colliders) -> Option<Hit> {
+		let rays = self.build_rays(bounds, vel);
 
 		for ray in rays {
 			if let Some(hit) = ray.cast(colliders) {
 				return Some(hit);
 			}
 		}
-
 		None
 	}
 
-	pub fn snap_to_ground(&self, pos: &mut Vector, vel: &mut Vector, hit: Hit) -> bool {
-		let last_y = pos.y;
-		pos.y = hit.point.y - hit.distance.y + vel.y;
+	fn build_rays(&self, bounds: &dyn Bounds, vel: &Vector) -> Vec<Ray> {
+		let direction = (0., 1.).into();
+		let distance = bounds.radius() + vel.y;
 
-		vel.y = 0.;
-		pos.y > last_y
+		vec![
+			Ray::new(bounds.pos(), direction, Some(distance)),
+			Ray::new(
+				bounds.pos() - (bounds.radius() * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+			Ray::new(
+				bounds.pos() + (bounds.radius() * 0.85, 0).into(),
+				direction,
+				Some(distance - 3.),
+			),
+		]
 	}
 
-	pub fn update_position(&self, pos: &mut Vector, vel: &Vector) {
-		*pos += *vel;
+	pub fn snap_to_ground(&self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
+		let last_y = bounds.y();
+		bounds.set_y(hit.point.y - hit.distance.y + vel.y);
+
+		vel.y = 0.;
+		bounds.y() > last_y
+	}
+
+	pub fn update_position(&self, bounds: &mut dyn Bounds, vel: &Vector) {
+		bounds.set_pos(bounds.pos() + *vel);
 	}
 }

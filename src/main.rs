@@ -1,9 +1,8 @@
 mod config;
+mod game;
 mod physics;
 mod player;
-mod rolly_game;
-mod time_stepper;
-use rolly_game::RollyGame;
+use game::{time_stepper::TimeStepper, Game};
 
 #[macro_use]
 extern crate serde_derive;
@@ -16,8 +15,8 @@ use quicksilver::{
 async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> {
 	let mut config = config::load();
 
-	let game = RollyGame::new(&config, &gfx, window.size()).await?;
-	let mut time_stepper = time_stepper::TimeStepper::new(game);
+	let game = Game::new(&config, &gfx, window.size()).await?;
+	let mut time_stepper = TimeStepper::new(game);
 
 	let mut running = true;
 

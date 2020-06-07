@@ -1,14 +1,14 @@
-use crate::rolly_game::RollyGame;
+use super::Game;
 use quicksilver::{Graphics, Input, Result, Timer, Window};
 
 pub struct TimeStepper {
-	game: RollyGame,
+	game: Game,
 	update_timer: Timer,
 	draw_timer: Timer,
 }
 
 impl TimeStepper {
-	pub fn new(game: RollyGame) -> Self {
+	pub fn new(game: Game) -> Self {
 		Self {
 			game,
 			update_timer: Timer::time_per_second(60.0),
