@@ -59,7 +59,7 @@ impl RollyGame {
 		colliders
 	}
 
-	pub fn update(&mut self, input: &Input, size: Vector) {
+	pub fn update(&mut self, input: &Input) {
 		// print mouse location
 		if input.key_down(Key::LControl) {
 			println!("{}", input.mouse().location());
@@ -78,7 +78,7 @@ impl RollyGame {
 			}
 		}
 
-		self.player.update(input, &self.colliders, size);
+		self.player.update(input, &self.colliders);
 
 		if input.key_down(Key::Space) {
 			self.player.reset();

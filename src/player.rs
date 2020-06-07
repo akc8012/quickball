@@ -34,7 +34,7 @@ impl Player {
 	}
 
 	// TODO: somehow only pass Input to input component
-	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>], _size: Vector) {
+	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>]) {
 		self.fall();
 
 		if let Some(hit) = self.grounded(colliders) {
