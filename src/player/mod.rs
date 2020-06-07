@@ -21,11 +21,11 @@ pub struct Player {
 }
 
 impl Player {
-	pub fn new(bounds: Box<dyn Bounds>) -> Self {
+	pub fn new(bounds: Box<dyn Bounds>, image: Option<Image>) -> Self {
 		Player {
 			input: InputComponent::new(),
 			physics: PhysicsComponent::new(),
-			draw: DrawComponent::new(),
+			draw: DrawComponent::new(image),
 
 			bounds,
 			vel: Vector::ZERO,
@@ -55,7 +55,7 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn draw(&self, image: &Option<Image>, gfx: &mut Graphics) {
-		self.draw.draw(self.bounds.as_ref(), image, gfx);
+	pub fn draw(&self, gfx: &mut Graphics) {
+		self.draw.draw(self.bounds.as_ref(), gfx);
 	}
 }

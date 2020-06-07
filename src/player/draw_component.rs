@@ -6,17 +6,20 @@ use quicksilver::{
 	Graphics,
 };
 
-pub struct DrawComponent;
+pub struct DrawComponent {
+	image: Option<Image>,
+}
 
 impl DrawComponent {
-	pub fn new() -> Self {
-		DrawComponent {}
+	pub fn new(image: Option<Image>) -> Self {
+		DrawComponent { image }
 	}
 
-	pub fn draw(&self, bounds: &dyn Bounds, image: &Option<Image>, gfx: &mut Graphics) {
-		if let Some(image) = image {
+	pub fn draw(&self, bounds: &dyn Bounds, gfx: &mut Graphics) {
+		// TODO: No if statement, just use a different component or None
+		if let Some(image) = &self.image {
 			gfx.draw_image(
-				image,
+				&image,
 				Rectangle::new(bounds.pos() - (Vector::ONE * bounds.radius()), image.size()),
 			);
 		} else {

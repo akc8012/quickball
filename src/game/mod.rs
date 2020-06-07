@@ -16,12 +16,12 @@ use quicksilver::{
 pub struct Game {
 	player: Player,
 	colliders: Colliders,
+
+	// TODO: Something more formalized to load resources: A method loading a map of images?
 	background: Option<Image>,
-	ball: Option<Image>, // TODO: Something more formalized to load resources: A method loading a map of images?
 }
 
 impl Game {
-	// TODO: window size as Game field
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
 		let (background, ball) = if config.load_art {
 			let background = Image::load(gfx, "background.png").await?;
@@ -33,10 +33,9 @@ impl Game {
 		};
 
 		Ok(Game {
-			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.))),
+			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), ball),
 			colliders: Colliders::new(size),
 			background,
-			ball,
 		})
 	}
 
@@ -63,6 +62,6 @@ impl Game {
 		}
 
 		self.colliders.draw(gfx);
-		self.player.draw(&self.ball, gfx);
+		self.player.draw(gfx);
 	}
 }
