@@ -12,10 +12,8 @@ pub struct DrawImageComponent {
 }
 
 impl DrawImageComponent {
-	pub fn new(image: Option<Image>) -> Self {
-		DrawImageComponent {
-			image: image.expect("Tried to load DrawImageComponent with no Image"),
-		}
+	pub fn new(image: Image) -> Self {
+		DrawImageComponent { image }
 	}
 }
 

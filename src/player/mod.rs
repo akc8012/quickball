@@ -3,6 +3,7 @@ use crate::{
 	physics::{colliders::Colliders, Bounds},
 };
 
+pub mod draw_circle_component;
 pub mod draw_image_component;
 
 mod input_component;

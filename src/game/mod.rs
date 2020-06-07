@@ -1,9 +1,10 @@
 pub mod time_stepper;
 
 use crate::{
+	components::draw_component::DrawComponent,
 	config::Config,
 	physics::colliders::{circle_bounds::CircleBounds, Colliders},
-	player::{draw_image_component::DrawImageComponent, Player},
+	player::{draw_circle_component::DrawCircleComponent, draw_image_component::DrawImageComponent, Player},
 };
 
 use quicksilver::{
@@ -17,7 +18,7 @@ pub struct Game {
 	player: Player,
 	colliders: Colliders,
 
-	// TODO: Something more formalized to load resources: A method loading a map of images?
+	// TODO: Something more formalized to load resources: Provide a list of filenames, access a map via filename
 	background: Option<Image>,
 }
 
@@ -32,11 +33,13 @@ impl Game {
 			(None, None)
 		};
 
+		let draw: Box<dyn DrawComponent> = match ball {
+			Some(ball) => Box::new(DrawImageComponent::new(ball)),
+			None => Box::new(DrawCircleComponent::new()),
+		};
+
 		Ok(Game {
-			player: Player::new(
-				Box::new(CircleBounds::new((300, 20).into(), 16.)),
-				Box::new(DrawImageComponent::new(ball)),
-			),
+			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), draw),
 			colliders: Colliders::new(size),
 			background,
 		})
