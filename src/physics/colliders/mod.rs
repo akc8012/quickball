@@ -1,4 +1,12 @@
-use super::{Bounds, PointBounds, RectangleBounds};
+pub mod rectangle_bounds;
+use rectangle_bounds::RectangleBounds;
+
+pub mod point_bounds;
+use point_bounds::PointBounds;
+
+pub mod circle_bounds;
+
+use super::Bounds;
 use quicksilver::{geom::Vector, Graphics, Input};
 
 pub struct Colliders {

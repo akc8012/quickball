@@ -1,6 +1,6 @@
 use crate::{
 	config::Config,
-	physics::{colliders::Colliders, *},
+	physics::colliders::{circle_bounds::CircleBounds, Colliders},
 	player::Player,
 };
 
@@ -45,7 +45,6 @@ impl RollyGame {
 		}
 
 		self.colliders.update(input);
-
 		self.player.update(input, &self.colliders);
 
 		if input.key_down(Key::Space) {
