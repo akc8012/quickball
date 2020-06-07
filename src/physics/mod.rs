@@ -6,7 +6,7 @@ use quicksilver::{
 	Graphics,
 };
 
-pub trait Collide {
+pub trait Bounds {
 	fn x(&self) -> f32;
 
 	fn y(&self) -> f32;
@@ -21,11 +21,11 @@ pub trait Collide {
 	fn draw(&self, gfx: &mut Graphics);
 }
 
-pub struct RectangleCollider {
+pub struct RectangleBounds {
 	bounds: Rectangle,
 }
 
-impl RectangleCollider {
+impl RectangleBounds {
 	pub fn new(pos: impl Into<Vector>, size: impl Into<Vector>) -> Self {
 		let mut bounds = Rectangle::new(pos, size);
 		bounds.pos = (bounds.pos.x.round(), bounds.pos.y.round()).into();
@@ -35,7 +35,7 @@ impl RectangleCollider {
 	}
 }
 
-impl Collide for RectangleCollider {
+impl Bounds for RectangleBounds {
 	fn x(&self) -> f32 {
 		self.bounds.x()
 	}
@@ -61,17 +61,17 @@ impl Collide for RectangleCollider {
 	}
 }
 
-impl Clone for RectangleCollider {
+impl Clone for RectangleBounds {
 	fn clone(&self) -> Self {
-		RectangleCollider { bounds: self.bounds }
+		RectangleBounds { bounds: self.bounds }
 	}
 }
 
-pub struct PointCollider {
+pub struct PointBounds {
 	point: Vector,
 }
 
-impl PointCollider {
+impl PointBounds {
 	pub fn new(point: Vector) -> Self {
 		Self {
 			point: (point.x.round(), point.y.round()).into(),
@@ -79,7 +79,7 @@ impl PointCollider {
 	}
 }
 
-impl Collide for PointCollider {
+impl Bounds for PointBounds {
 	fn x(&self) -> f32 {
 		self.point.x
 	}

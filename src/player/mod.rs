@@ -36,7 +36,7 @@ impl Player {
 
 	// TODO: somehow only pass Input to input component
 	// TODO: pass in colliders via a World object
-	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Collide>]) {
+	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Bounds>]) {
 		self.physics.fall(&mut self.vel);
 
 		if let Some(hit) = self

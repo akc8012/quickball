@@ -1,5 +1,4 @@
-use crate::physics::{raycast::*, Collide};
-
+use crate::physics::{raycast::*, Bounds};
 use quicksilver::geom::Vector;
 
 pub struct PhysicsComponent;
@@ -17,7 +16,7 @@ impl PhysicsComponent {
 	pub fn grounded(
 		&self,
 		(pos, vel, radius): (&mut Vector, &mut Vector, f32),
-		colliders: &[Box<dyn Collide>],
+		colliders: &[Box<dyn Bounds>],
 	) -> Option<Hit> {
 		let direction = (0., 1.).into();
 		let distance = radius + vel.y;
