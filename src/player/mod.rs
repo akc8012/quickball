@@ -34,18 +34,20 @@ impl Player {
 
 	// TODO: somehow only pass Input to input component
 	// TODO: pass in colliders via a World object
-	pub fn update(&mut self, input: &Input, colliders: &[Box<dyn Bounds>]) {
-		self.physics.fall(&mut self.vel);
+	pub fn update(&mut self, input_: &Input, colliders: &[Box<dyn Bounds>]) {
+		let (physics, input) = (&self.physics, &mut self.input);
 
-		if let Some(hit) = self.physics.grounded(&self.bounds, &self.vel, colliders) {
-			if !self.physics.snap_to_ground(&mut self.bounds, &mut self.vel, hit) {
-				self.input.jump_if_pressed(&mut self.vel, input);
+		physics.fall(&mut self.vel);
+
+		if let Some(hit) = physics.grounded(&self.bounds, &self.vel, colliders) {
+			if !physics.snap_to_ground(&mut self.bounds, &mut self.vel, hit) {
+				input.jump_if_pressed(&mut self.vel, input_);
 			}
 		}
-		self.input.set_jump_key_released(input);
+		input.set_jump_key_released(input_);
 
-		self.input.roll(&mut self.vel, input);
-		self.physics.update_position(&mut self.bounds, &self.vel);
+		input.roll(&mut self.vel, input_);
+		physics.update_position(&mut self.bounds, &self.vel);
 	}
 
 	pub fn reset(&mut self) {

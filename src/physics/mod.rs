@@ -9,11 +9,13 @@ use quicksilver::{
 pub trait Bounds {
 	fn x(&self) -> f32;
 	fn y(&self) -> f32;
+	// TODO: pos()
 
 	fn top_left(&self) -> Vector;
 	fn top_right(&self) -> Vector;
 
 	fn width(&self) -> f32;
+	// TODO: radius()
 
 	// TODO: THIS SHOULD BE ON A DIFFERENT TRAIT
 	fn draw(&self, gfx: &mut Graphics);
