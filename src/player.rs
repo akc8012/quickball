@@ -39,12 +39,12 @@ impl Player {
 
 		if let Some(hit) = self.grounded(colliders) {
 			if !self.snap_to_ground(hit) {
-				self.input = self.input.jump_if_pressed(self, input);
+				self.input.jump_if_pressed(&mut self.vel, input);
 			}
 		}
 		self.input.set_jump_key_released(input);
 
-		self.input.roll(self, input);
+		self.input.roll(&mut self.vel, input);
 		self.update_position();
 	}
 

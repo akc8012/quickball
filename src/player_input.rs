@@ -1,10 +1,11 @@
-use crate::player::Player;
-use quicksilver::{input::Key, Input};
+use quicksilver::{geom::Vector, input::Key, Input};
 
 #[derive(Copy, Clone)]
 pub struct PlayerInput {
 	jump_key_released: bool,
 }
+
+const JUMP_HEIGHT: f32 = 20.;
 
 impl PlayerInput {
 	pub fn new() -> Self {
@@ -13,34 +14,27 @@ impl PlayerInput {
 		}
 	}
 
-	pub fn roll(self, player: &mut Player, input: &Input) {
+	pub fn roll(self, vel: &mut Vector, input: &Input) {
 		const ROLL_SPEED: f32 = 4.;
-		player.vel.x = 0.;
+		vel.x = 0.;
 
 		if input.key_down(Key::A) || input.key_down(Key::Left) {
-			player.vel.x -= ROLL_SPEED;
+			vel.x -= ROLL_SPEED;
 		}
 		if input.key_down(Key::D) || input.key_down(Key::Right) {
-			player.vel.x += ROLL_SPEED;
+			vel.x += ROLL_SPEED;
 		}
 	}
 
-	pub fn jump_if_pressed(mut self, player: &mut Player, input: &Input) -> Self {
+	pub fn jump_if_pressed(&mut self, vel: &mut Vector, input: &Input) {
 		if self.can_jump(input) {
-			self.jump(player);
+			vel.y -= JUMP_HEIGHT;
+			self.jump_key_released = false;
 		}
-		self
 	}
 
 	fn can_jump(&self, input: &Input) -> bool {
 		self.jump_key_released && (input.key_down(Key::W) || input.key_down(Key::Up))
-	}
-
-	fn jump(&mut self, player: &mut Player) {
-		const JUMP_HEIGHT: f32 = 20.;
-
-		player.vel.y -= JUMP_HEIGHT;
-		self.jump_key_released = false;
 	}
 
 	pub fn set_jump_key_released(&mut self, input: &Input) {
