@@ -6,15 +6,15 @@ use input_component::InputComponent;
 mod physics_component;
 use physics_component::PhysicsComponent;
 
-use quicksilver::{
-	geom::{Circle, Rectangle, Vector},
-	graphics::{Color, Image},
-	Graphics, Input,
-};
+mod draw_component;
+use draw_component::DrawComponent;
+
+use quicksilver::{geom::Vector, graphics::Image, Graphics, Input};
 
 pub struct Player {
 	input: InputComponent,
 	physics: PhysicsComponent,
+	draw: DrawComponent,
 
 	pub pos: Vector,
 	pub vel: Vector,
@@ -26,6 +26,8 @@ impl Player {
 		Player {
 			input: InputComponent::new(),
 			physics: PhysicsComponent::new(),
+			draw: DrawComponent::new(),
+
 			pos: (300, 20).into(),
 			vel: Vector::ZERO,
 			radius: 16.,
@@ -57,13 +59,6 @@ impl Player {
 	}
 
 	pub fn draw(&self, image: &Option<Image>, gfx: &mut Graphics) {
-		if let Some(image) = image {
-			gfx.draw_image(
-				image,
-				Rectangle::new(self.pos - (Vector::ONE * self.radius), image.size()),
-			);
-		} else {
-			gfx.fill_circle(&Circle::new(self.pos, self.radius), Color::from_hex("4f30d9"));
-		}
+		self.draw.draw(&self.pos, self.radius, image, gfx);
 	}
 }
