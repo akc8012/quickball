@@ -1,4 +1,5 @@
-use crate::{components::draw_component::DrawComponent, physics::Bounds};
+use super::DrawComponent;
+use crate::physics::Bounds;
 use quicksilver::{geom::Circle, graphics::Color, Graphics};
 
 pub struct DrawCircleComponent;

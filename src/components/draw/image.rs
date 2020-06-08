@@ -1,4 +1,4 @@
-use crate::components::draw_component;
+use super::DrawComponent;
 use crate::physics::Bounds;
 
 use quicksilver::{
@@ -17,7 +17,7 @@ impl DrawImageComponent {
 	}
 }
 
-impl draw_component::DrawComponent for DrawImageComponent {
+impl DrawComponent for DrawImageComponent {
 	fn draw(&self, gfx: &mut Graphics, bounds: Option<&dyn Bounds>) {
 		let bounds = bounds.expect("Where are your bounds bruh??");
 

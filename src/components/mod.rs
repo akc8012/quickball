@@ -1,1 +1,1 @@
-pub mod draw_component;
+pub mod draw;

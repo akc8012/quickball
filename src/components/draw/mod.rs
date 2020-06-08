@@ -1,3 +1,6 @@
+pub mod circle;
+pub mod image;
+
 use crate::physics::Bounds;
 use quicksilver::Graphics;
 

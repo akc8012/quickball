@@ -1,10 +1,10 @@
 pub mod time_stepper;
 
 use crate::{
-	components::draw_component::DrawComponent,
+	components::draw::{circle::*, image::*, DrawComponent},
 	config::Config,
 	physics::colliders::{circle_bounds::CircleBounds, Colliders},
-	player::{draw_circle_component::DrawCircleComponent, draw_image_component::DrawImageComponent, Player},
+	player::Player,
 };
 
 use quicksilver::{

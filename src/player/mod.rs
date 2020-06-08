@@ -1,10 +1,7 @@
 use crate::{
-	components::draw_component::DrawComponent,
+	components::draw::DrawComponent,
 	physics::{colliders::Colliders, Bounds},
 };
-
-pub mod draw_circle_component;
-pub mod draw_image_component;
 
 mod input_component;
 use input_component::InputComponent;
