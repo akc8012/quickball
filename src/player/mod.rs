@@ -1,33 +1,33 @@
-use crate::physics::{colliders::Colliders, Bounds};
+use crate::{
+	components::draw::DrawComponent,
+	physics::{colliders::Colliders, Bounds},
+};
 
-mod input_component;
-use input_component::InputComponent;
+mod input;
+use input::InputComponent;
 
-mod physics_component;
-use physics_component::PhysicsComponent;
+mod physics;
+use physics::PhysicsComponent;
 
-mod draw_component;
-use draw_component::DrawComponent;
-
-use quicksilver::{geom::Vector, graphics::Image, Graphics, Input};
+use quicksilver::{geom::Vector, Graphics, Input};
 
 pub struct Player {
 	input: InputComponent,
 	physics: PhysicsComponent,
-	draw: DrawComponent,
 
 	bounds: Box<dyn Bounds>,
+	draw: Box<dyn DrawComponent>,
+
 	vel: Vector,
 }
 
 impl Player {
-	pub fn new(bounds: Box<dyn Bounds>, image: Option<Image>) -> Self {
+	pub fn new(bounds: Box<dyn Bounds>, draw: Box<dyn DrawComponent>) -> Self {
 		Player {
 			input: InputComponent::new(),
 			physics: PhysicsComponent::new(),
-			draw: DrawComponent::new(image),
-
 			bounds,
+			draw,
 			vel: Vector::ZERO,
 		}
 	}
@@ -56,6 +56,6 @@ impl Player {
 	}
 
 	pub fn draw(&self, gfx: &mut Graphics) {
-		self.draw.draw(self.bounds.as_ref(), gfx);
+		self.draw.draw(gfx, Some(self.bounds.as_ref()));
 	}
 }

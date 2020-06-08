@@ -1,6 +1,7 @@
 pub mod time_stepper;
 
 use crate::{
+	components::draw::{circle::*, image::*, DrawComponent},
 	config::Config,
 	physics::colliders::{circle_bounds::CircleBounds, Colliders},
 	player::Player,
@@ -17,7 +18,7 @@ pub struct Game {
 	player: Player,
 	colliders: Colliders,
 
-	// TODO: Something more formalized to load resources: A method loading a map of images?
+	// TODO: Something more formalized to load resources: Provide a list of filenames, access a map via filename
 	background: Option<Image>,
 }
 
@@ -32,8 +33,13 @@ impl Game {
 			(None, None)
 		};
 
+		let draw: Box<dyn DrawComponent> = match ball {
+			Some(ball) => Box::new(DrawImageComponent::new(ball)),
+			None => Box::new(DrawCircleComponent::new()),
+		};
+
 		Ok(Game {
-			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), ball),
+			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), draw),
 			colliders: Colliders::new(size),
 			background,
 		})
@@ -55,10 +61,9 @@ impl Game {
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
 		// background
-		if let Some(background) = &self.background {
-			gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size()));
-		} else {
-			gfx.clear(Color::from_hex("ade7ff"));
+		match &self.background {
+			Some(background) => gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size())),
+			None => gfx.clear(Color::from_hex("ade7ff")),
 		}
 
 		self.colliders.draw(gfx);
