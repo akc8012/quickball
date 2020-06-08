@@ -61,10 +61,9 @@ impl Game {
 
 	pub fn draw(&mut self, gfx: &mut Graphics) {
 		// background
-		if let Some(background) = &self.background {
-			gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size()));
-		} else {
-			gfx.clear(Color::from_hex("ade7ff"));
+		match &self.background {
+			Some(background) => gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size())),
+			None => gfx.clear(Color::from_hex("ade7ff")),
 		}
 
 		self.colliders.draw(gfx);
