@@ -3,11 +3,11 @@ use crate::{
 	physics::{colliders::Colliders, Bounds},
 };
 
-mod input_component;
-use input_component::InputComponent;
+mod input;
+use input::InputComponent;
 
-mod physics_component;
-use physics_component::PhysicsComponent;
+mod physics;
+use physics::PhysicsComponent;
 
 use quicksilver::{geom::Vector, Graphics, Input};
 
