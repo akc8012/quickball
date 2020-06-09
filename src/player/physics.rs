@@ -33,12 +33,12 @@ impl PhysicsComponent {
 			// Ray::new(
 			// 	bounds.pos() - (bounds.radius() * 0.85, 0).into(),
 			// 	direction,
-			// 	Some(distance - 3.),
+			// 	Some(max_distance - 3.),
 			// ),
 			// Ray::new(
 			// 	bounds.pos() + (bounds.radius() * 0.85, 0).into(),
 			// 	direction,
-			// 	Some(distance - 3.),
+			// 	Some(max_distance - 3.),
 			// ),
 		]
 	}

@@ -28,18 +28,31 @@ impl Ray {
 		let distance: Vector = self.direction * self.max_distance;
 		let ray_x: f32 = self.origin.x.round();
 
-		for collider in colliders.get() {
+		let mut highest = Hit {
+			point: Vector::new(10000., 10000.),
+			distance: Vector::ZERO,
+		};
+
+		for collider in colliders.get().filter(|c| c.y() >= self.origin.y) {
 			let overflow: Vector = (self.origin + distance) - collider.pos();
 			let within_x: bool = ray_x >= collider.top_left().x && ray_x <= collider.top_right().x;
 
 			if overflow.y >= 0. && within_x {
 				let point: Vector = (ray_x, collider.y()).into();
-				return Some(Hit {
-					point,
-					distance: distance - overflow,
-				});
+				if point.y < highest.point.y {
+					highest = Hit {
+						point,
+						distance: distance - overflow,
+					};
+				}
 			}
 		}
-		None
+
+		// TODO: this check is garbage
+		if highest.distance == Vector::ZERO {
+			None
+		} else {
+			Some(highest)
+		}
 	}
 }

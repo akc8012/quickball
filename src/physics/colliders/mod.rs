@@ -12,6 +12,7 @@ use quicksilver::{
 	graphics::Color,
 	Graphics, Input,
 };
+use std::slice::Iter;
 
 pub struct Colliders {
 	colliders: Vec<Box<dyn Bounds>>,
@@ -24,8 +25,8 @@ impl Colliders {
 		}
 	}
 
-	pub fn get(&self) -> &Vec<Box<dyn Bounds>> {
-		&self.colliders
+	pub fn get(&self) -> Iter<Box<dyn Bounds>> {
+		self.colliders.iter()
 	}
 
 	fn create_colliders(size: Vector) -> Vec<Box<dyn Bounds>> {
