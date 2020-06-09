@@ -39,15 +39,15 @@ impl Player {
 
 		physics.fall(&mut self.vel);
 
-		if let Some(hit) = physics.grounded(self.bounds.as_ref(), &self.vel, colliders) {
-			if !physics.snap_to_ground(self.bounds.as_mut(), &mut self.vel, hit) {
+		if let Some(hit) = physics.grounded(&*self.bounds, &self.vel, colliders) {
+			if !physics.snap_to_ground(&mut *self.bounds, &mut self.vel, hit) {
 				input.jump_if_pressed(&mut self.vel, input_);
 			}
 		}
 		input.set_jump_key_released(input_);
 
 		input.roll(&mut self.vel, input_);
-		physics.update_position(self.bounds.as_mut(), &self.vel);
+		physics.update_position(&mut *self.bounds, &self.vel);
 	}
 
 	pub fn reset(&mut self) {
@@ -56,6 +56,6 @@ impl Player {
 	}
 
 	pub fn draw(&self, gfx: &mut Graphics) {
-		self.draw.draw(gfx, Some(self.bounds.as_ref()));
+		self.draw.draw(gfx, Some(&*self.bounds));
 	}
 }
