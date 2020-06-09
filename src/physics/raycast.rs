@@ -25,18 +25,29 @@ impl Ray {
 	}
 
 	pub fn cast(&self, colliders: &Colliders) -> Option<Hit> {
-		for collider in colliders.get() {
-			let distance: Vector = self.direction * self.max_distance;
-			let exceeding_y: bool = (self.origin + distance).y >= collider.y();
+		let distance: Vector = self.direction * self.max_distance;
+		let ray_x: f32 = self.origin.x.round();
 
-			let ray_x: f32 = self.origin.x.round();
+		let mut highest: Option<Hit> = None;
+
+		for collider in colliders.get().filter(|c| c.y() >= self.origin.y) {
+			let overflow: Vector = (self.origin + distance) - collider.pos();
 			let within_x: bool = ray_x >= collider.top_left().x && ray_x <= collider.top_right().x;
 
-			if exceeding_y && within_x {
-				let point: Vector = (self.origin.x, collider.y()).into();
-				return Some(Hit { point, distance });
+			if overflow.y >= 0. && within_x {
+				if let Some(h) = &highest {
+					if collider.y() >= h.point.y {
+						continue;
+					}
+				}
+
+				highest = Some(Hit {
+					point: (ray_x, collider.y()).into(),
+					distance: distance - overflow,
+				});
 			}
 		}
-		None
+
+		highest
 	}
 }
