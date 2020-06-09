@@ -40,7 +40,7 @@ impl Game {
 
 		Ok(Game {
 			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), draw),
-			colliders: Colliders::new(size),
+			colliders: Colliders::new(size, config.draw_colliders),
 			background,
 		})
 	}
