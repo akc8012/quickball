@@ -36,6 +36,7 @@ impl Game {
 		})
 	}
 
+	// TODO: Return a slice or Vec of Option<Image>
 	async fn load_images(gfx: &Graphics) -> Result<(Option<Image>, Option<Image>)> {
 		Ok((
 			Some(Image::load(gfx, "background.png").await?),

@@ -13,6 +13,7 @@ pub trait Bounds {
 
 	fn width(&self) -> f32;
 	fn height(&self) -> f32;
+	fn size(&self) -> Vector;
 	fn radius(&self) -> f32;
 
 	fn set_pos(&mut self, pos: Vector) -> Vector;

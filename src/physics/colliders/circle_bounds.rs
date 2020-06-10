@@ -41,6 +41,10 @@ impl Bounds for CircleBounds {
 		self.width()
 	}
 
+	fn size(&self) -> Vector {
+		(self.radius, self.radius).into()
+	}
+
 	fn radius(&self) -> f32 {
 		self.radius
 	}
