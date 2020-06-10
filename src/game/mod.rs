@@ -1,7 +1,7 @@
 pub mod time_stepper;
 
 use crate::{
-	components::draw::{circle::*, image::*, DrawComponent},
+	components::draw::{circle::*, image::*},
 	config::Config,
 	physics::colliders::{circle_bounds::CircleBounds, Colliders},
 	player::Player,
@@ -24,25 +24,33 @@ pub struct Game {
 
 impl Game {
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
-		let (background, ball) = if config.load_art {
-			let background = Image::load(gfx, "background.png").await?;
-			let ball = Image::load(gfx, "ball.png").await?;
-
-			(Some(background), Some(ball))
-		} else {
-			(None, None)
-		};
-
-		let draw: Box<dyn DrawComponent> = match ball {
-			Some(ball) => Box::new(DrawImageComponent::new(ball)),
-			None => Box::new(DrawCircleComponent::new()),
+		let (background, ball) = match config.load_art {
+			true => Self::load_images(gfx).await?,
+			false => (None, None),
 		};
 
 		Ok(Game {
-			player: Player::new(Box::new(CircleBounds::new((300, 20).into(), 16.)), draw),
-			colliders: Colliders::new(size, config.draw_colliders),
 			background,
+			player: Self::create_player(ball),
+			colliders: Colliders::new(size, config.draw_colliders),
 		})
+	}
+
+	async fn load_images(gfx: &Graphics) -> Result<(Option<Image>, Option<Image>)> {
+		Ok((
+			Some(Image::load(gfx, "background.png").await?),
+			Some(Image::load(gfx, "ball.png").await?),
+		))
+	}
+
+	fn create_player(ball: Option<Image>) -> Player {
+		Player::new(
+			Box::new(CircleBounds::new((300, 20).into(), 16.)),
+			match ball {
+				Some(ball) => Box::new(DrawImageComponent::new(ball)),
+				None => Box::new(DrawCircleComponent::new(Color::from_hex("4f30d9"))),
+			},
+		)
 	}
 
 	pub fn update(&mut self, input: &Input) {
