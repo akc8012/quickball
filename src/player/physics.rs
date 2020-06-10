@@ -1,16 +1,28 @@
-use crate::physics::{colliders::Colliders, raycast::*, Bounds};
-use quicksilver::geom::Vector;
+use crate::{
+	components::draw::{circle::DrawCircleComponent, DrawComponent},
+	physics::{
+		colliders::{circle_bounds::CircleBounds, Colliders},
+		raycast::*,
+		Bounds,
+	},
+};
+use quicksilver::{geom::Vector, graphics::Color, Graphics};
 
-pub struct PhysicsComponent;
+pub struct PhysicsComponent {
+	last_hit: Option<Hit>,
+}
 const GRAVITY: f32 = 2.;
 
 impl PhysicsComponent {
 	pub fn new() -> Self {
-		PhysicsComponent {}
+		PhysicsComponent { last_hit: None }
 	}
 
-	pub fn fall(&self, vel: &mut Vector) {
+	pub fn fall(&mut self, vel: &mut Vector) {
 		vel.y += GRAVITY;
+
+		// TODO: Should go on a more generic `update` style method?
+		self.last_hit = None;
 	}
 
 	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &Colliders) -> Option<Hit> {
@@ -43,15 +55,23 @@ impl PhysicsComponent {
 		]
 	}
 
-	pub fn snap_to_ground(&self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
-		let last_y = bounds.y();
-		bounds.set_y(bounds.y() + hit.distance.y - bounds.radius());
-
+	pub fn snap_to_ground(&mut self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
 		vel.y = 0.;
-		bounds.y() > last_y
+		self.last_hit = Some(hit.clone());
+
+		let last_y = bounds.y();
+		let new_y = bounds.set_y(bounds.y() + hit.distance.y - bounds.radius());
+		new_y > last_y
 	}
 
 	pub fn update_position(&self, bounds: &mut dyn Bounds, vel: &Vector) {
 		bounds.set_pos(bounds.pos() + *vel);
+	}
+
+	pub fn draw(&self, gfx: &mut Graphics) {
+		if let Some(hit) = &self.last_hit {
+			let hit_circle = DrawCircleComponent::new(Color::RED);
+			hit_circle.draw(gfx, Some(&CircleBounds::new(hit.point, 2.5)));
+		}
 	}
 }
