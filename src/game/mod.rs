@@ -24,9 +24,10 @@ pub struct Game {
 
 impl Game {
 	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
-		let (background, ball) = match config.load_art {
-			true => Self::load_images(gfx).await?,
-			false => (None, None),
+		let (background, ball) = if config.load_art {
+			Self::load_images(gfx).await?
+		} else {
+			(None, None)
 		};
 
 		Ok(Game {
@@ -38,10 +39,10 @@ impl Game {
 
 	// TODO: Return a slice or Vec of Option<Image>
 	async fn load_images(gfx: &Graphics) -> Result<(Option<Image>, Option<Image>)> {
-		Ok((
-			Some(Image::load(gfx, "background.png").await?),
-			Some(Image::load(gfx, "ball.png").await?),
-		))
+		let background = Image::load(gfx, "background.png").await?;
+		let ball = Image::load(gfx, "ball.png").await?;
+
+		Ok((Some(background), Some(ball)))
 	}
 
 	fn create_player(ball: Option<Image>) -> Player {
