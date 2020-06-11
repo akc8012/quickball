@@ -16,12 +16,14 @@ use std::slice::Iter;
 
 pub struct Colliders {
 	colliders: Vec<Box<dyn Bounds>>,
+	draw_colliders: bool,
 }
 
 impl Colliders {
-	pub fn new(size: Vector) -> Self {
+	pub fn new(size: Vector, draw_colliders: bool) -> Self {
 		Colliders {
 			colliders: Self::create_colliders(size),
+			draw_colliders,
 		}
 	}
 
@@ -67,6 +69,10 @@ impl Colliders {
 	}
 
 	pub fn draw(&self, gfx: &mut Graphics) {
+		if !self.draw_colliders {
+			return;
+		}
+
 		for collider in &self.colliders {
 			if collider.should_draw() {
 				gfx.fill_rect(

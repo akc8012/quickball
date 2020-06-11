@@ -35,7 +35,7 @@ impl Player {
 	// TODO: somehow only pass Input to input component
 	// TODO: pass in colliders via a World object
 	pub fn update(&mut self, input_: &Input, colliders: &Colliders) {
-		let (physics, input) = (&self.physics, &mut self.input);
+		let (physics, input) = (&mut self.physics, &mut self.input);
 
 		physics.fall(&mut self.vel);
 
@@ -55,7 +55,11 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn draw(&self, gfx: &mut Graphics) {
+	pub fn draw(&self, gfx: &mut Graphics, debug_draw: bool) {
 		self.draw.draw(gfx, Some(&*self.bounds));
+
+		if debug_draw {
+			self.physics.draw(gfx);
+		}
 	}
 }

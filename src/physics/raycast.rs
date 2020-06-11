@@ -7,6 +7,7 @@ pub struct Ray {
 	pub max_distance: f32,
 }
 
+#[derive(Clone)]
 pub struct Hit {
 	pub point: Vector,
 	pub distance: Vector,

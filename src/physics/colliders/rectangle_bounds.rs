@@ -44,6 +44,10 @@ impl Bounds for RectangleBounds {
 		self.bounds.height()
 	}
 
+	fn size(&self) -> Vector {
+		self.bounds.size
+	}
+
 	fn radius(&self) -> f32 {
 		self.bounds.width() / 2.
 	}

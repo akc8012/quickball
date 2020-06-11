@@ -42,6 +42,10 @@ impl Bounds for PointBounds {
 		1.
 	}
 
+	fn size(&self) -> Vector {
+		(1., 1.).into()
+	}
+
 	fn radius(&self) -> f32 {
 		panic!("Attempt to get the radius of a PointBounds")
 	}

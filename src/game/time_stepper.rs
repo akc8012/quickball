@@ -1,4 +1,5 @@
 use super::Game;
+use crate::config::Config;
 use quicksilver::{Graphics, Input, Result, Timer, Window};
 
 pub struct TimeStepper {
@@ -16,22 +17,34 @@ impl TimeStepper {
 		}
 	}
 
-	pub fn timed_step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
+	pub fn timed_step(
+		&mut self,
+		input: &Input,
+		gfx: &mut Graphics,
+		window: &Window,
+		config: &Config,
+	) -> Result<()> {
 		while self.update_timer.tick() {
 			self.game.update(&input);
 		}
 
 		if self.draw_timer.exhaust().is_some() {
-			self.game.draw(gfx);
+			self.game.draw(gfx, config.debug_draw);
 			gfx.present(&window)?;
 		}
 
 		Ok(())
 	}
 
-	pub fn step(&mut self, input: &Input, gfx: &mut Graphics, window: &Window) -> Result<()> {
+	pub fn step(
+		&mut self,
+		input: &Input,
+		gfx: &mut Graphics,
+		window: &Window,
+		config: &Config,
+	) -> Result<()> {
 		self.game.update(&input);
-		self.game.draw(gfx);
+		self.game.draw(gfx, config.debug_draw);
 		gfx.present(&window)
 	}
 }
