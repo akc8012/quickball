@@ -1,7 +1,7 @@
 use crate::{
-	components::draw::{circle::DrawCircleComponent, DrawComponent},
+	components::draw::{circle::DrawCircleComponent, rectangle::DrawRectangleComponent, DrawComponent},
 	physics::{
-		colliders::{circle_bounds::CircleBounds, Colliders},
+		colliders::{circle_bounds::CircleBounds, rectangle_bounds::RectangleBounds, Colliders},
 		raycast::*,
 		Bounds,
 	},
@@ -10,12 +10,16 @@ use quicksilver::{geom::Vector, graphics::Color, Graphics};
 
 pub struct PhysicsComponent {
 	last_hit: Option<Hit>,
+	rays: Vec<Ray>,
 }
 const GRAVITY: f32 = 2.;
 
 impl PhysicsComponent {
 	pub fn new() -> Self {
-		PhysicsComponent { last_hit: None }
+		PhysicsComponent {
+			last_hit: None,
+			rays: Vec::new(),
+		}
 	}
 
 	pub fn fall(&mut self, vel: &mut Vector) {
@@ -25,10 +29,10 @@ impl PhysicsComponent {
 		self.last_hit = None;
 	}
 
-	pub fn grounded(&self, bounds: &dyn Bounds, vel: &Vector, colliders: &Colliders) -> Option<Hit> {
-		let rays = self.build_rays(bounds, vel);
+	pub fn grounded(&mut self, bounds: &dyn Bounds, vel: &Vector, colliders: &Colliders) -> Option<Hit> {
+		self.rays = self.build_rays(bounds, vel);
 
-		for ray in rays {
+		for ray in &self.rays {
 			if let Some(hit) = ray.cast(colliders) {
 				return Some(hit);
 			}
@@ -40,19 +44,7 @@ impl PhysicsComponent {
 		let direction = (0., 1.).into();
 		let max_distance = bounds.radius() + vel.y;
 
-		vec![
-			Ray::new(bounds.pos(), direction, Some(max_distance)),
-			// Ray::new(
-			// 	bounds.pos() - (bounds.radius() * 0.85, 0).into(),
-			// 	direction,
-			// 	Some(max_distance - 3.),
-			// ),
-			// Ray::new(
-			// 	bounds.pos() + (bounds.radius() * 0.85, 0).into(),
-			// 	direction,
-			// 	Some(max_distance - 3.),
-			// ),
-		]
+		vec![Ray::new(bounds.pos(), direction, Some(max_distance))]
 	}
 
 	pub fn snap_to_ground(&mut self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
@@ -71,7 +63,19 @@ impl PhysicsComponent {
 	pub fn draw(&self, gfx: &mut Graphics) {
 		if let Some(hit) = &self.last_hit {
 			let hit_circle = DrawCircleComponent::new(Color::RED);
-			hit_circle.draw(gfx, Some(&CircleBounds::new(hit.point, 2.5)));
+			hit_circle.draw(gfx, Some(&CircleBounds::new(hit.point, 3.)));
+		}
+
+		for ray in &self.rays {
+			let ray_line = DrawRectangleComponent::new(Color::RED);
+
+			let line_width = 1.5;
+			let bounds = RectangleBounds::new(
+				(ray.origin.x - (line_width / 2.), ray.origin.y),
+				(line_width, ray.max_distance),
+			);
+
+			ray_line.draw(gfx, Some(&bounds));
 		}
 	}
 }
