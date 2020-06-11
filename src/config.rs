@@ -3,6 +3,7 @@ pub struct Config {
 	pub step_mode: bool,
 	pub load_art: bool,
 	pub draw_colliders: bool,
+	pub debug_draw: bool,
 }
 
 impl Default for Config {
@@ -11,6 +12,7 @@ impl Default for Config {
 			step_mode: false,
 			load_art: true,
 			draw_colliders: true,
+			debug_draw: false,
 		}
 	}
 }

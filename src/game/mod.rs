@@ -69,7 +69,7 @@ impl Game {
 		}
 	}
 
-	pub fn draw(&mut self, gfx: &mut Graphics) {
+	pub fn draw(&mut self, gfx: &mut Graphics, debug_draw: bool) {
 		// background
 		match &self.background {
 			Some(background) => gfx.draw_image(background, Rectangle::new(Vector::ZERO, background.size())),
@@ -77,6 +77,6 @@ impl Game {
 		}
 
 		self.colliders.draw(gfx);
-		self.player.draw(gfx);
+		self.player.draw(gfx, debug_draw);
 	}
 }

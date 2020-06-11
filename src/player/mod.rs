@@ -55,8 +55,11 @@ impl Player {
 		self.vel = Vector::ZERO;
 	}
 
-	pub fn draw(&self, gfx: &mut Graphics) {
+	pub fn draw(&self, gfx: &mut Graphics, debug_draw: bool) {
 		self.draw.draw(gfx, Some(&*self.bounds));
-		self.physics.draw(gfx);
+
+		if debug_draw {
+			self.physics.draw(gfx);
+		}
 	}
 }

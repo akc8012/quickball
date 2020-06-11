@@ -31,13 +31,13 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
 					config = config::load();
 				}
 				if config.step_mode && key.key() == Key::N && key.is_down() {
-					time_stepper.step(&input, &mut gfx, &window)?;
+					time_stepper.step(&input, &mut gfx, &window, &config)?;
 				}
 			}
 		}
 
 		if !config.step_mode {
-			time_stepper.timed_step(&input, &mut gfx, &window)?;
+			time_stepper.timed_step(&input, &mut gfx, &window, &config)?;
 		}
 	}
 
