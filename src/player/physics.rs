@@ -61,13 +61,8 @@ impl PhysicsComponent {
 	}
 
 	pub fn draw(&self, gfx: &mut Graphics) {
-		if let Some(hit) = &self.last_hit {
-			let hit_circle = DrawCircleComponent::new(Color::RED);
-			hit_circle.draw(gfx, Some(&CircleBounds::new(hit.point, 3.)));
-		}
-
 		for ray in &self.rays {
-			let ray_line = DrawRectangleComponent::new(Color::RED);
+			let ray_line = DrawRectangleComponent::new(Color::ORANGE);
 
 			let line_width = 1.5;
 			let bounds = RectangleBounds::new(
@@ -76,6 +71,11 @@ impl PhysicsComponent {
 			);
 
 			ray_line.draw(gfx, Some(&bounds));
+		}
+
+		if let Some(hit) = &self.last_hit {
+			let hit_circle = DrawCircleComponent::new(Color::RED);
+			hit_circle.draw(gfx, Some(&CircleBounds::new(hit.point, 3.)));
 		}
 	}
 }
