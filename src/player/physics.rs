@@ -42,9 +42,18 @@ impl PhysicsComponent {
 
 	fn build_rays(&self, bounds: &dyn Bounds, vel: &Vector) -> Vec<Ray> {
 		let direction = (0., 1.).into();
-		let max_distance = bounds.radius() + vel.y;
+		let max_distance = bounds.radius() + vel.y - 3.;
+		println!("max_distance: {}", max_distance);
 
-		vec![Ray::new(bounds.pos(), direction, Some(max_distance))]
+		vec![
+			// Ray::new(bounds.pos(), direction, Some(max_distance + 3.1)),
+			Ray::new(bounds.pos(), direction, Some(max_distance)),
+			// Ray::new(
+			// 	bounds.pos() + (bounds.radius() * 0.85, 0).into(),
+			// 	direction,
+			// 	Some(max_distance - 3.),
+			// ),
+		]
 	}
 
 	pub fn snap_to_ground(&mut self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
