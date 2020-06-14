@@ -7,11 +7,9 @@ pub struct RectangleBounds {
 
 impl RectangleBounds {
 	pub fn new(pos: impl Into<Vector>, size: impl Into<Vector>) -> Self {
-		let mut bounds = Rectangle::new(pos, size);
-		bounds.pos = (bounds.pos.x.round(), bounds.pos.y.round()).into();
-		bounds.size = (bounds.size.x.round(), bounds.size.y.round()).into();
-
-		Self { bounds }
+		Self {
+			bounds: Rectangle::new(pos, size),
+		}
 	}
 }
 

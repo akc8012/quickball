@@ -99,7 +99,7 @@ mod tests {
 	fn cast_one_collider_hit() {
 		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
 
-		let floor = Rectangle::new((-20, 3), (40, 5));
+		let floor = Rectangle::new((-20.1, 3.3), (40.5, 5.1));
 		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor))], false);
 
 		let hit = ray.cast(&colliders).unwrap();
