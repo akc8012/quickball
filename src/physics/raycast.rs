@@ -13,6 +13,8 @@ pub struct Hit {
 	pub distance: Vector,
 }
 
+const DEFAULT_MAX_DISTANCE: f32 = 100.;
+
 impl Ray {
 	pub fn new(origin: Vector, direction: Vector, max_distance: Option<f32>) -> Self {
 		Self {
@@ -20,7 +22,7 @@ impl Ray {
 			direction,
 			max_distance: match max_distance {
 				Some(d) => d,
-				None => 100.0,
+				None => DEFAULT_MAX_DISTANCE,
 			},
 		}
 	}
@@ -50,5 +52,24 @@ impl Ray {
 		}
 
 		highest
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn create_ray() {
+		let default_distance = Ray::new(Vector::ZERO, (0, 1).into(), None);
+		let specific_distance = Ray::new((20, 30).into(), Vector::ONE, Some(6.));
+
+		assert_eq!(default_distance.origin, Vector::ZERO);
+		assert_eq!(default_distance.direction, (0, 1).into());
+		assert_eq!(default_distance.max_distance, DEFAULT_MAX_DISTANCE);
+
+		assert_eq!(specific_distance.origin, (20, 30).into());
+		assert_eq!(specific_distance.direction, Vector::ONE);
+		assert_eq!(specific_distance.max_distance, 6.);
 	}
 }
