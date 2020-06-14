@@ -126,7 +126,7 @@ mod tests {
 
 		let hit = ray.cast(&colliders).unwrap();
 		assert_eq!(hit.point, (ray.origin.x, floor.pos.y).into());
-		assert_eq!(hit.distance, hit.point - ray.origin);
+		assert_eq!(hit.distance, (0, floor.pos.y - ray.origin.y).into());
 	}
 
 	#[test]
@@ -139,5 +139,24 @@ mod tests {
 		let hit = ray.cast(&colliders).unwrap();
 		assert_eq!(hit.point, (2., 5.).into());
 		assert_eq!(hit.distance, (0., 6.).into());
+	}
+
+	#[test]
+	fn cast_many_colliders_one_hit() {
+		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
+
+		let floor = Rectangle::new((-20.1, 3.3), (40.5, 5.1));
+		let platform = Rectangle::new((-20.1, 0.2), (40.5, 5.1));
+		let colliders = Colliders::create(
+			vec![
+				Box::new(RectangleBounds::from(floor)),
+				Box::new(RectangleBounds::from(platform)),
+			],
+			false,
+		);
+
+		let hit = ray.cast(&colliders).unwrap();
+		assert_eq!(hit.point, (ray.origin.x, platform.pos.y).into());
+		assert_eq!(hit.distance, (0, platform.pos.y - ray.origin.y).into());
 	}
 }
