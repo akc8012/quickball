@@ -20,10 +20,10 @@ impl PhysicsComponent {
 		vec![Ray::new(bounds.pos(), direction, Some(max_distance))]
 	}
 
-	pub fn grounded(&self, rays: &[Ray], colliders: &Colliders) -> Option<Hit> {
+	pub fn grounded(&self, rays: &[Ray], colliders: &Colliders) -> Option<(Hit, Ray)> {
 		for ray in rays {
 			if let Some(hit) = ray.cast(colliders) {
-				return Some(hit);
+				return Some((hit, ray.clone()));
 			}
 		}
 		None
@@ -85,11 +85,12 @@ mod tests {
 		let floor = Rectangle::new((-5, 3), (5, 10));
 		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor))], false);
 
-		let hit = physics.grounded(&rays, &colliders).unwrap();
+		let (hit, ray) = physics.grounded(&rays, &colliders).unwrap();
 		assert_eq!(hit.point, (rays[0].origin.x, floor.y()).into());
 
 		assert_eq!(hit.distance, (0, 4).into());
 		assert_eq!(hit.distance.y, floor.pos.y - rays[0].origin.y);
+		assert_eq!(ray, rays[0]);
 	}
 
 	#[test]

@@ -1,6 +1,7 @@
 use super::colliders::Colliders;
 use quicksilver::geom::Vector;
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct Ray {
 	pub origin: Vector,
 	pub direction: Vector,
