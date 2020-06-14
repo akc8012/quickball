@@ -91,4 +91,22 @@ mod tests {
 		assert_eq!(hit.distance, (0, 4).into());
 		assert_eq!(hit.distance.y, floor.pos.y - rays[0].origin.y);
 	}
+
+	#[test]
+	fn snap_to_ground() {
+		let physics = PhysicsComponent::new();
+
+		let mut bounds = CircleBounds::new((0, -1).into(), 3.);
+		let mut vel = Vector::new(0, 12.);
+		let hit = Hit {
+			point: (0, 3).into(),
+			distance: (0, 4).into(),
+		};
+
+		let snapped = physics.snap_to_ground(&mut bounds, &mut vel, hit);
+
+		assert!(snapped);
+		assert_eq!(bounds.pos(), (0, 0).into());
+		assert_eq!(vel, (0, 0).into());
+	}
 }
