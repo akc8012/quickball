@@ -42,7 +42,7 @@ impl PhysicsComponent {
 
 	fn build_rays(&self, bounds: &dyn Bounds, vel: &Vector) -> Vec<Ray> {
 		let direction = (0., 1.).into();
-		let max_distance = bounds.radius() + vel.y - 3.;
+		let max_distance = bounds.radius() + vel.y;
 		println!("max_distance: {}", max_distance);
 
 		vec![
