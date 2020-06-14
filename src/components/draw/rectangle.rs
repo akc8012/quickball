@@ -7,6 +7,7 @@ pub struct DrawRectangleComponent {
 }
 
 impl DrawRectangleComponent {
+	#[allow(dead_code)] // TODO: use this
 	pub fn new(color: Color) -> Self {
 		DrawRectangleComponent { color }
 	}
