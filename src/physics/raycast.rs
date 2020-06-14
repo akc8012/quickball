@@ -29,7 +29,7 @@ impl Ray {
 
 	pub fn cast(&self, colliders: &Colliders) -> Option<Hit> {
 		let distance: Vector = self.direction * self.max_distance;
-		let ray_x: f32 = self.origin.x.round();
+		let ray_x: f32 = self.origin.x.floor();
 
 		let mut highest: Option<Hit> = None;
 
@@ -45,7 +45,7 @@ impl Ray {
 				}
 
 				highest = Some(Hit {
-					point: (ray_x, collider.y()).into(),
+					point: (self.origin.x, collider.y()).into(),
 					distance: (distance.x, distance.y - overflow_y).into(),
 				});
 			}
@@ -97,18 +97,20 @@ mod tests {
 
 	#[test]
 	fn cast_many_colliders_no_hit() {
-		let ray = Ray::new(Vector::ZERO, (0, 1).into(), Some(6.));
+		let ray = Ray::new((0.9, 0).into(), (0, 1).into(), Some(6.));
 
 		let floor_below = RectangleBounds::from(Rectangle::new((-20, 7.), (40, 5)));
 		let floor_left = RectangleBounds::from(Rectangle::new((-20, 2.), (10, 5)));
 		let floor_right = RectangleBounds::from(Rectangle::new((20, 2.), (10, 5)));
 		let floor_above = RectangleBounds::from(Rectangle::new((0., -5.), (40, 5)));
+		let point_off = PointBounds::new(1, 0);
 		let colliders = Colliders::create(
 			vec![
 				Box::new(floor_below),
 				Box::new(floor_left),
 				Box::new(floor_right),
 				Box::new(floor_above),
+				Box::new(point_off),
 			],
 			false,
 		);
@@ -131,13 +133,13 @@ mod tests {
 
 	#[test]
 	fn cast_one_point_collider_hit() {
-		let ray = Ray::new((2.2, -1).into(), (0, 1).into(), Some(8.));
+		let ray = Ray::new((2.7, -1).into(), (0, 1).into(), Some(8.));
 
 		let point = (2, 5);
 		let colliders = Colliders::create(vec![Box::new(PointBounds::new(point.0, point.1))], false);
 
 		let hit = ray.cast(&colliders).unwrap();
-		assert_eq!(hit.point, (2., 5.).into());
+		assert_eq!(hit.point, (2.7, 5.).into());
 		assert_eq!(hit.distance, (0., 6.).into());
 	}
 

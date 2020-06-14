@@ -5,6 +5,7 @@ pub struct InputComponent {
 }
 
 const JUMP_HEIGHT: f32 = 20.;
+const ROLL_SPEED: f32 = 4.2;
 
 impl InputComponent {
 	pub fn new() -> Self {
@@ -14,7 +15,6 @@ impl InputComponent {
 	}
 
 	pub fn roll(&self, vel: &mut Vector, input: &Input) {
-		const ROLL_SPEED: f32 = 4.;
 		vel.x = 0.;
 
 		if input.key_down(Key::A) || input.key_down(Key::Left) {

@@ -45,3 +45,32 @@ impl PhysicsComponent {
 		// no-op
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::physics::colliders::{circle_bounds::CircleBounds, rectangle_bounds::RectangleBounds};
+	use quicksilver::geom::Rectangle;
+
+	#[test]
+	fn fall() {
+		let physics = PhysicsComponent::new();
+		let mut vel = Vector::new(0, 3.);
+
+		physics.fall(&mut vel);
+		assert_eq!(vel, (0, 3. + GRAVITY).into());
+	}
+
+	#[test]
+	fn grounded() {
+		let physics = PhysicsComponent::new();
+		let bounds = CircleBounds::new((0.1, 0.3).into(), 6.2);
+		let vel = Vector::new(0, 6.);
+
+		let floor = Rectangle::new((-10.2, 4.1), (20, 24));
+		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor))], false);
+
+		let hit = physics.grounded(&bounds, &vel, &colliders).unwrap();
+		assert_eq!(hit.point, (bounds.x(), floor.y()).into());
+	}
+}
