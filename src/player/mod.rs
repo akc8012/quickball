@@ -39,7 +39,8 @@ impl Player {
 
 		physics.fall(&mut self.vel);
 
-		if let Some(hit) = physics.grounded(&*self.bounds, &self.vel, colliders) {
+		let rays = physics.build_rays(&*self.bounds, &self.vel);
+		if let Some(hit) = physics.grounded(&rays, colliders) {
 			if !physics.snap_to_ground(&mut *self.bounds, &mut self.vel, hit) {
 				input.jump_if_pressed(&mut self.vel, input_);
 			}

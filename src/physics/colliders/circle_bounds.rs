@@ -2,8 +2,8 @@ use crate::physics::Bounds;
 use quicksilver::geom::Vector;
 
 pub struct CircleBounds {
-	pub pos: Vector,
-	pub radius: f32,
+	pos: Vector,
+	radius: f32,
 }
 
 impl CircleBounds {
