@@ -72,4 +72,13 @@ mod tests {
 		assert_eq!(specific_distance.direction, Vector::ONE);
 		assert_eq!(specific_distance.max_distance, 6.);
 	}
+
+	#[test]
+	fn cast_zero_colliders() {
+		let ray = Ray::new(Vector::ZERO, (0, 1).into(), None);
+		let colliders = Colliders::create(Vec::new(), false);
+
+		let hit = ray.cast(&colliders);
+		assert!(hit.is_none());
+	}
 }

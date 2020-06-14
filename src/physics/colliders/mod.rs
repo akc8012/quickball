@@ -20,9 +20,17 @@ pub struct Colliders {
 }
 
 impl Colliders {
-	pub fn new(size: Vector, draw_colliders: bool) -> Self {
+	#[cfg(test)]
+	pub fn create(colliders: Vec<Box<dyn Bounds>>, draw_colliders: bool) -> Self {
 		Colliders {
-			colliders: Self::create_colliders(size),
+			colliders,
+			draw_colliders,
+		}
+	}
+
+	pub fn create_populated(window_size: Vector, draw_colliders: bool) -> Self {
+		Colliders {
+			colliders: Self::populate_colliders(window_size),
 			draw_colliders,
 		}
 	}
@@ -31,13 +39,13 @@ impl Colliders {
 		self.colliders.iter()
 	}
 
-	fn create_colliders(size: Vector) -> Vec<Box<dyn Bounds>> {
+	fn populate_colliders(window_size: Vector) -> Vec<Box<dyn Bounds>> {
 		let mut colliders: Vec<Box<dyn Bounds>> = Vec::new();
 
 		// ground
 		colliders.push(Box::new(RectangleBounds::new(
-			(0.0, size.y - 20.0),
-			(size.x, 32.0),
+			(0.0, window_size.y - 20.0),
+			(window_size.x, 32.0),
 		)));
 
 		// platform

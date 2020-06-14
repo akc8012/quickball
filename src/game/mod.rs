@@ -23,7 +23,7 @@ pub struct Game {
 }
 
 impl Game {
-	pub async fn new(config: &Config, gfx: &Graphics, size: Vector) -> Result<Self> {
+	pub async fn new(config: &Config, gfx: &Graphics, window_size: Vector) -> Result<Self> {
 		let (background, ball) = if config.load_art {
 			Self::load_images(gfx).await?
 		} else {
@@ -33,7 +33,7 @@ impl Game {
 		Ok(Game {
 			background,
 			player: Self::create_player(ball),
-			colliders: Colliders::new(size, config.draw_colliders),
+			colliders: Colliders::create_populated(window_size, config.draw_colliders),
 		})
 	}
 
