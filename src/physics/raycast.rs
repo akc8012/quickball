@@ -34,10 +34,10 @@ impl Ray {
 		let mut highest: Option<Hit> = None;
 
 		for collider in colliders.get().filter(|c| c.y() >= self.origin.y) {
-			let overflow: Vector = (self.origin + distance) - collider.pos();
+			let overflow_y: f32 = ((self.origin + distance) - collider.pos()).y;
 			let within_x: bool = ray_x >= collider.top_left().x && ray_x <= collider.top_right().x;
 
-			if overflow.y >= 0. && within_x {
+			if overflow_y >= 0. && within_x {
 				if let Some(h) = &highest {
 					if collider.y() >= h.point.y {
 						continue;
@@ -46,7 +46,7 @@ impl Ray {
 
 				highest = Some(Hit {
 					point: (ray_x, collider.y()).into(),
-					distance: distance - overflow,
+					distance: (distance.x, distance.y - overflow_y).into(),
 				});
 			}
 		}
@@ -85,13 +85,25 @@ mod tests {
 	}
 
 	#[test]
-	fn cast_one_collider_hit() {
+	fn cast_one_collider_no_hit() {
 		let ray = Ray::new(Vector::ZERO, (0, 1).into(), Some(6.));
+
+		let floor_below = Rectangle::new((-20, 7.), (40, 5));
+		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor_below))], false);
+
+		let hit = ray.cast(&colliders);
+		assert!(hit.is_none());
+	}
+
+	#[test]
+	fn cast_one_collider_hit() {
+		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
 
 		let floor = Rectangle::new((-20, 3), (40, 5));
 		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor))], false);
 
 		let hit = ray.cast(&colliders).unwrap();
 		assert_eq!(hit.point, (ray.origin.x, floor.pos.y).into());
+		assert_eq!(hit.distance, hit.point - ray.origin);
 	}
 }
