@@ -7,6 +7,7 @@ pub struct DrawRectangleComponent {
 }
 
 impl DrawRectangleComponent {
+	#[allow(dead_code)] // TODO: use this
 	pub fn new(color: Color) -> Self {
 		DrawRectangleComponent { color }
 	}
@@ -15,7 +16,6 @@ impl DrawRectangleComponent {
 impl DrawComponent for DrawRectangleComponent {
 	fn draw(&self, gfx: &mut Graphics, bounds: Option<&dyn Bounds>) {
 		let bounds = bounds.expect("Where are your bounds bruh??");
-
 		gfx.fill_rect(&Rectangle::new(bounds.pos(), bounds.size()), self.color);
 	}
 }

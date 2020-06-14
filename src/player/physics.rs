@@ -1,58 +1,39 @@
-use crate::{
-	components::draw::{circle::DrawCircleComponent, rectangle::DrawRectangleComponent, DrawComponent},
-	physics::{
-		colliders::{circle_bounds::CircleBounds, rectangle_bounds::RectangleBounds, Colliders},
-		raycast::*,
-		Bounds,
-	},
-};
-use quicksilver::{geom::Vector, graphics::Color, Graphics};
+use crate::physics::{colliders::Colliders, raycast::*, Bounds};
+use quicksilver::{geom::Vector, Graphics};
 
-pub struct PhysicsComponent {
-	last_hit: Option<Hit>,
-	rays: Vec<Ray>,
-}
+pub struct PhysicsComponent;
 const GRAVITY: f32 = 2.;
 
 impl PhysicsComponent {
 	pub fn new() -> Self {
-		PhysicsComponent {
-			last_hit: None,
-			rays: Vec::new(),
-		}
+		PhysicsComponent {}
 	}
 
-	pub fn fall(&mut self, vel: &mut Vector) {
+	pub fn fall(&self, vel: &mut Vector) {
 		vel.y += GRAVITY;
-
-		// TODO: Should go on a more generic `update` style method?
-		self.last_hit = None;
 	}
 
-	pub fn grounded(&mut self, bounds: &dyn Bounds, vel: &Vector, colliders: &Colliders) -> Option<Hit> {
-		self.rays = self.build_rays(bounds, vel);
-
-		for ray in &self.rays {
-			if let Some(hit) = ray.cast(colliders) {
-				return Some(hit);
-			}
-		}
-		None
-	}
-
-	fn build_rays(&self, bounds: &dyn Bounds, vel: &Vector) -> Vec<Ray> {
+	pub fn build_rays(&self, bounds: &dyn Bounds, vel: &Vector) -> Vec<Ray> {
 		let direction = (0., 1.).into();
 		let max_distance = bounds.radius() + vel.y;
 
 		vec![Ray::new(bounds.pos(), direction, Some(max_distance))]
 	}
 
-	pub fn snap_to_ground(&mut self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: Hit) -> bool {
-		vel.y = 0.;
-		self.last_hit = Some(hit.clone());
+	pub fn grounded(&self, rays: &[Ray], colliders: &Colliders) -> Option<Hit> {
+		for ray in rays {
+			if let Some(hit) = ray.cast_down(colliders) {
+				return Some(hit);
+			}
+		}
+		None
+	}
 
+	pub fn snap_to_ground(&self, bounds: &mut dyn Bounds, vel: &mut Vector, hit: &Hit) -> bool {
 		let last_y = bounds.y();
-		let new_y = bounds.set_y(bounds.y() + hit.distance.y - bounds.radius());
+		let new_y = bounds.set_y(bounds.y() - hit.overlap + vel.y);
+
+		vel.y = 0.;
 		new_y > last_y
 	}
 
@@ -60,22 +41,92 @@ impl PhysicsComponent {
 		bounds.set_pos(bounds.pos() + *vel);
 	}
 
-	pub fn draw(&self, gfx: &mut Graphics) {
-		if let Some(hit) = &self.last_hit {
-			let hit_circle = DrawCircleComponent::new(Color::RED);
-			hit_circle.draw(gfx, Some(&CircleBounds::new(hit.point, 3.)));
-		}
-
-		for ray in &self.rays {
-			let ray_line = DrawRectangleComponent::new(Color::RED);
-
-			let line_width = 1.5;
-			let bounds = RectangleBounds::new(
-				(ray.origin.x - (line_width / 2.), ray.origin.y),
-				(line_width, ray.max_distance),
-			);
-
-			ray_line.draw(gfx, Some(&bounds));
-		}
+	pub fn draw(&self, _gfx: &mut Graphics) {
+		// no-op
 	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::physics::colliders::{circle_bounds::CircleBounds, rectangle_bounds::RectangleBounds};
+	use quicksilver::geom::Rectangle;
+
+	#[test]
+	fn fall() {
+		let physics = PhysicsComponent::new();
+		let mut vel = Vector::new(0, 3.);
+
+		physics.fall(&mut vel);
+		assert_eq!(vel, (0, 3. + GRAVITY).into());
+	}
+
+	#[test]
+	fn build_rays() {
+		let physics = PhysicsComponent::new();
+		let bounds = CircleBounds::new((0, -1).into(), 3.);
+		let vel = Vector::new(0, 2.);
+
+		let rays = physics.build_rays(&bounds, &vel);
+		assert_eq!(rays[0].origin, bounds.pos());
+		assert_eq!(rays[0].direction, (0, 1).into());
+		assert_eq!(rays[0].max_distance, bounds.radius() + vel.y);
+	}
+
+	#[test]
+	fn grounded() {
+		let physics = PhysicsComponent::new();
+		let rays = vec![Ray {
+			origin: (0, -1).into(),
+			direction: (0, 1).into(),
+			max_distance: 16.,
+		}];
+
+		let floor = Rectangle::new((-5, 3), (5, 10));
+		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor))], false);
+
+		let hit = physics.grounded(&rays, &colliders).unwrap();
+		assert_eq!(hit.point, (rays[0].origin.x, floor.y()).into());
+
+		assert_eq!(hit.distance, 4.);
+		assert_eq!(hit.distance, floor.pos.y - rays[0].origin.y);
+
+		assert_eq!(hit.overlap, 12.);
+	}
+
+	// #[test]
+	// fn snap_to_ground_snap() {
+	// 	let physics = PhysicsComponent::new();
+
+	// 	let mut bounds = CircleBounds::new((0, -1).into(), 3.);
+	// 	let mut vel = Vector::new(0, 12.);
+	// 	let hit = Hit {
+	// 		point: (0, 3).into(),
+	// 		distance: (0, 4).into(),
+	// 	};
+
+	// 	let snapped = physics.snap_to_ground(&mut bounds, &mut vel, &hit);
+
+	// 	assert!(snapped);
+	// 	assert_eq!(bounds.pos(), (0, 0).into());
+	// 	assert_eq!(vel, (0, 0).into());
+	// }
+
+	// #[test]
+	// fn snap_to_ground_stay() {
+	// 	let physics = PhysicsComponent::new();
+
+	// 	let mut bounds = CircleBounds::new((0, -1).into(), 3.);
+	// 	let mut vel = Vector::new(0, 12.);
+	// 	let hit = Hit {
+	// 		point: (0, 3).into(),
+	// 		distance: (0, 3.).into(),
+	// 	};
+
+	// 	let snapped = physics.snap_to_ground(&mut bounds, &mut vel, &hit);
+
+	// 	assert!(!snapped);
+	// 	assert_eq!(bounds.pos(), (0, -1).into());
+	// 	assert_eq!(vel, (0, 0).into());
+	// }
 }

@@ -20,9 +20,17 @@ pub struct Colliders {
 }
 
 impl Colliders {
-	pub fn new(size: Vector, draw_colliders: bool) -> Self {
+	#[cfg(test)]
+	pub fn create(colliders: Vec<Box<dyn Bounds>>, draw_colliders: bool) -> Self {
 		Colliders {
-			colliders: Self::create_colliders(size),
+			colliders,
+			draw_colliders,
+		}
+	}
+
+	pub fn create_populated(window_size: Vector, draw_colliders: bool) -> Self {
+		Colliders {
+			colliders: Self::populate_colliders(window_size),
 			draw_colliders,
 		}
 	}
@@ -31,13 +39,13 @@ impl Colliders {
 		self.colliders.iter()
 	}
 
-	fn create_colliders(size: Vector) -> Vec<Box<dyn Bounds>> {
+	fn populate_colliders(window_size: Vector) -> Vec<Box<dyn Bounds>> {
 		let mut colliders: Vec<Box<dyn Bounds>> = Vec::new();
 
 		// ground
 		colliders.push(Box::new(RectangleBounds::new(
-			(0.0, size.y - 20.0),
-			(size.x, 32.0),
+			(0.0, window_size.y - 20.0),
+			(window_size.x, 32.0),
 		)));
 
 		// platform
@@ -46,7 +54,7 @@ impl Colliders {
 		// points
 		for x in 0..300 {
 			for y in 380..383 {
-				colliders.push(Box::new(PointBounds::new((x, y).into())));
+				colliders.push(Box::new(PointBounds::new(x, y)));
 			}
 		}
 
@@ -55,14 +63,14 @@ impl Colliders {
 
 	pub fn update(&mut self, input: &Input) {
 		if input.mouse().left() {
-			self.colliders
-				.push(Box::new(PointBounds::new(input.mouse().location())));
+			let location = input.mouse().location();
+			// TODO: Point type
+			let location = (location.x.round() as i32, location.y.round() as i32);
 
 			for x in -5..5 {
 				for y in -5..5 {
-					self.colliders.push(Box::new(PointBounds::new(
-						input.mouse().location() + (x, y).into(),
-					)));
+					self.colliders
+						.push(Box::new(PointBounds::new(location.0 + x, location.1 + y)));
 				}
 			}
 		}
@@ -83,3 +91,5 @@ impl Colliders {
 		}
 	}
 }
+
+// TODO: Test create() methods! [zero]

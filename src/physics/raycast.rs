@@ -7,11 +7,13 @@ pub struct Ray {
 	pub max_distance: f32,
 }
 
-#[derive(Clone)]
 pub struct Hit {
 	pub point: Vector,
-	pub distance: Vector,
+	pub distance: f32,
+	pub overlap: f32,
 }
+
+const DEFAULT_MAX_DISTANCE: f32 = 100.;
 
 impl Ray {
 	pub fn new(origin: Vector, direction: Vector, max_distance: Option<f32>) -> Self {
@@ -20,22 +22,20 @@ impl Ray {
 			direction,
 			max_distance: match max_distance {
 				Some(d) => d,
-				None => 100.0,
+				None => DEFAULT_MAX_DISTANCE,
 			},
 		}
 	}
 
-	pub fn cast(&self, colliders: &Colliders) -> Option<Hit> {
-		let distance: Vector = self.direction * self.max_distance;
-		let ray_x: f32 = self.origin.x.round();
-
+	pub fn cast_down(&self, colliders: &Colliders) -> Option<Hit> {
+		let ray_x: f32 = self.origin.x.floor();
 		let mut highest: Option<Hit> = None;
 
 		for collider in colliders.get().filter(|c| c.y() >= self.origin.y) {
-			let overflow: Vector = (self.origin + distance) - collider.pos();
+			let overlap: f32 = (self.origin.y + self.max_distance) - collider.y();
 			let within_x: bool = ray_x >= collider.top_left().x && ray_x <= collider.top_right().x;
 
-			if overflow.y >= 0. && within_x {
+			if overlap >= 0. && within_x {
 				if let Some(h) = &highest {
 					if collider.y() >= h.point.y {
 						continue;
@@ -43,12 +43,126 @@ impl Ray {
 				}
 
 				highest = Some(Hit {
-					point: (ray_x, collider.y()).into(),
-					distance: distance - overflow,
+					point: (self.origin.x, collider.y()).into(),
+					distance: self.max_distance - overlap,
+					overlap,
 				});
 			}
 		}
 
 		highest
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::physics::colliders::{point_bounds::PointBounds, rectangle_bounds::RectangleBounds};
+	use quicksilver::geom::Rectangle;
+
+	#[test]
+	fn create_ray() {
+		let default_distance = Ray::new(Vector::ZERO, (0, 1).into(), None);
+		let specific_distance = Ray::new((20, 30).into(), Vector::ONE, Some(6.));
+
+		assert_eq!(default_distance.origin, Vector::ZERO);
+		assert_eq!(default_distance.direction, (0, 1).into());
+		assert_eq!(default_distance.max_distance, DEFAULT_MAX_DISTANCE);
+
+		assert_eq!(specific_distance.origin, (20, 30).into());
+		assert_eq!(specific_distance.direction, Vector::ONE);
+		assert_eq!(specific_distance.max_distance, 6.);
+	}
+
+	#[test]
+	fn cast_zero_colliders() {
+		let ray = Ray::new(Vector::ZERO, (0, 1).into(), None);
+		let colliders = Colliders::create(Vec::new(), false);
+
+		let hit = ray.cast_down(&colliders);
+		assert!(hit.is_none());
+	}
+
+	#[test]
+	fn cast_one_collider_no_hit() {
+		let ray = Ray::new(Vector::ZERO, (0, 1).into(), Some(6.));
+
+		let floor_below = Rectangle::new((-20, 7.), (40, 5));
+		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor_below))], false);
+
+		let hit = ray.cast_down(&colliders);
+		assert!(hit.is_none());
+	}
+
+	#[test]
+	fn cast_many_colliders_no_hit() {
+		let ray = Ray::new((0.9, 0).into(), (0, 1).into(), Some(6.));
+
+		let floor_below = RectangleBounds::from(Rectangle::new((-20, 7.), (40, 5)));
+		let floor_left = RectangleBounds::from(Rectangle::new((-20, 2.), (10, 5)));
+		let floor_right = RectangleBounds::from(Rectangle::new((20, 2.), (10, 5)));
+		let floor_above = RectangleBounds::from(Rectangle::new((0., -5.), (40, 5)));
+		let point_off = PointBounds::new(1, 0);
+		let colliders = Colliders::create(
+			vec![
+				Box::new(floor_below),
+				Box::new(floor_left),
+				Box::new(floor_right),
+				Box::new(floor_above),
+				Box::new(point_off),
+			],
+			false,
+		);
+
+		let hit = ray.cast_down(&colliders);
+		assert!(hit.is_none());
+	}
+
+	#[test]
+	fn cast_one_rect_collider_hit() {
+		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
+
+		let floor = Rectangle::new((-20.1, 3.3), (40.5, 5.1));
+		let colliders = Colliders::create(vec![Box::new(RectangleBounds::from(floor))], false);
+
+		let hit = ray.cast_down(&colliders).unwrap();
+		assert_eq!(hit.point, (ray.origin.x, floor.pos.y).into());
+		assert_eq!(hit.distance, floor.pos.y - ray.origin.y);
+		assert_eq!(hit.overlap, 1.7);
+	}
+
+	#[test]
+	fn cast_one_point_collider_hit() {
+		let ray = Ray::new((2.7, -1).into(), (0, 1).into(), Some(8.));
+
+		let point = (2, 5);
+		let colliders = Colliders::create(vec![Box::new(PointBounds::new(point.0, point.1))], false);
+
+		let hit = ray.cast_down(&colliders).unwrap();
+		assert_eq!(hit.point, (2.7, 5.).into());
+		assert_eq!(hit.distance, 6.);
+	}
+
+	#[test]
+	fn cast_many_colliders_one_hit() {
+		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
+
+		let floor = Rectangle::new((-20.1, 3.3), (40.5, 5.1));
+		let platform = Rectangle::new((-20.1, 0.2), (40.5, 5.1));
+		let colliders = Colliders::create(
+			vec![
+				Box::new(RectangleBounds::from(floor)),
+				Box::new(RectangleBounds::from(platform)),
+			],
+			false,
+		);
+
+		let hit = ray.cast_down(&colliders).unwrap();
+		assert_eq!(hit.point, (ray.origin.x, platform.pos.y).into());
+		assert_f32_eq(hit.distance, platform.pos.y - ray.origin.y);
+	}
+
+	fn assert_f32_eq(actual: f32, expected: f32) {
+		assert_eq!((actual * 10.).round() / 10., (expected * 10.).round() / 10.);
 	}
 }
