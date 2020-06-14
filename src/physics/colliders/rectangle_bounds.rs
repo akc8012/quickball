@@ -15,6 +15,12 @@ impl RectangleBounds {
 	}
 }
 
+impl From<Rectangle> for RectangleBounds {
+	fn from(rectangle: Rectangle) -> Self {
+		RectangleBounds::new(rectangle.pos, rectangle.size())
+	}
+}
+
 impl Bounds for RectangleBounds {
 	fn x(&self) -> f32 {
 		self.bounds.x()
