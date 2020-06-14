@@ -96,6 +96,28 @@ mod tests {
 	}
 
 	#[test]
+	fn cast_many_colliders_no_hit() {
+		let ray = Ray::new(Vector::ZERO, (0, 1).into(), Some(6.));
+
+		let floor_below = RectangleBounds::from(Rectangle::new((-20, 7.), (40, 5)));
+		let floor_left = RectangleBounds::from(Rectangle::new((-20, 2.), (10, 5)));
+		let floor_right = RectangleBounds::from(Rectangle::new((20, 2.), (10, 5)));
+		let floor_above = RectangleBounds::from(Rectangle::new((0., -5.), (40, 5)));
+		let colliders = Colliders::create(
+			vec![
+				Box::new(floor_below),
+				Box::new(floor_left),
+				Box::new(floor_right),
+				Box::new(floor_above),
+			],
+			false,
+		);
+
+		let hit = ray.cast(&colliders);
+		assert!(hit.is_none());
+	}
+
+	#[test]
 	fn cast_one_rect_collider_hit() {
 		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
 
