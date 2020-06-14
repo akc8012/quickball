@@ -58,7 +58,7 @@ impl Ray {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::physics::colliders::rectangle_bounds::RectangleBounds;
+	use crate::physics::colliders::{point_bounds::PointBounds, rectangle_bounds::RectangleBounds};
 	use quicksilver::geom::Rectangle;
 
 	#[test]
@@ -96,7 +96,7 @@ mod tests {
 	}
 
 	#[test]
-	fn cast_one_collider_hit() {
+	fn cast_one_rect_collider_hit() {
 		let ray = Ray::new((5, -1).into(), (0, 1).into(), Some(6.));
 
 		let floor = Rectangle::new((-20.1, 3.3), (40.5, 5.1));
@@ -105,5 +105,17 @@ mod tests {
 		let hit = ray.cast(&colliders).unwrap();
 		assert_eq!(hit.point, (ray.origin.x, floor.pos.y).into());
 		assert_eq!(hit.distance, hit.point - ray.origin);
+	}
+
+	#[test]
+	fn cast_one_point_collider_hit() {
+		let ray = Ray::new((2.2, -1).into(), (0, 1).into(), Some(8.));
+
+		let point = (2, 5);
+		let colliders = Colliders::create(vec![Box::new(PointBounds::new(point.0, point.1))], false);
+
+		let hit = ray.cast(&colliders).unwrap();
+		assert_eq!(hit.point, (2., 5.).into());
+		assert_eq!(hit.distance, (0., 6.).into());
 	}
 }

@@ -6,10 +6,8 @@ pub struct PointBounds {
 }
 
 impl PointBounds {
-	pub fn new(point: Vector) -> Self {
-		Self {
-			point: (point.x.round(), point.y.round()).into(),
-		}
+	pub fn new(x: i32, y: i32) -> Self {
+		Self { point: (x, y).into() }
 	}
 }
 
@@ -69,5 +67,3 @@ impl Bounds for PointBounds {
 		true
 	}
 }
-
-// TODO: Test rounding!

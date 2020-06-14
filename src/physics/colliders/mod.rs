@@ -54,7 +54,7 @@ impl Colliders {
 		// points
 		for x in 0..300 {
 			for y in 380..383 {
-				colliders.push(Box::new(PointBounds::new((x, y).into())));
+				colliders.push(Box::new(PointBounds::new(x, y)));
 			}
 		}
 
@@ -63,14 +63,14 @@ impl Colliders {
 
 	pub fn update(&mut self, input: &Input) {
 		if input.mouse().left() {
-			self.colliders
-				.push(Box::new(PointBounds::new(input.mouse().location())));
+			let location = input.mouse().location();
+			// TODO: Point type
+			let location = (location.x.round() as i32, location.y.round() as i32);
 
 			for x in -5..5 {
 				for y in -5..5 {
-					self.colliders.push(Box::new(PointBounds::new(
-						input.mouse().location() + (x, y).into(),
-					)));
+					self.colliders
+						.push(Box::new(PointBounds::new(location.0 + x, location.1 + y)));
 				}
 			}
 		}
